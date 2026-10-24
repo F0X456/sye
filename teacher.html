@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>متابعة الطلاب - SYE</title>
+<style>
+  body { margin: 0; background: #000; color: #e8e8ee; font-family: Tahoma, Arial, sans-serif; padding: 20px; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  .sub { color: #9a9aa6; font-size: 14px; margin-bottom: 18px; }
+  .toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+  button { padding: 9px 16px; border: none; border-radius: 8px; background: #6f8cff; color: #fff; cursor: pointer; font-family: inherit; font-size: 14px; }
+  table { width: 100%; border-collapse: collapse; background: #0f0f14; border: 1px solid #22222b; border-radius: 10px; overflow: hidden; }
+  th, td { padding: 10px 12px; border-bottom: 1px solid #22222b; text-align: right; font-size: 14px; }
+  th { background: #1c1c24; color: #9a9aa6; font-weight: normal; }
+  .bar { height: 6px; background: #1c1c24; border-radius: 4px; overflow: hidden; min-width: 120px; }
+  .bar-fill { height: 100%; background: #6f8cff; }
+  .ok { color: #4cc38a; }
+  .bad { color: #ff6b6b; }
+  .empty { color: #9a9aa6; padding: 20px; text-align: center; }
+</style>
+</head>
+<body>
+<h1>متابعة الطلاب - تمرين الإملاء</h1>
+<div class="sub">كل طالب ومكانه في الـ111 جملة، وعدد الحروف الصح والغلط</div>
+<div class="toolbar">
+  <button id="refresh">تحديث</button>
+  <span id="updated" class="sub"></span>
+</div>
+<div id="out"></div>
+
+<script>
+  // نفس الرابط والمفتاح اللي في صفحة الطالب
+  const SB_URL = "https://atkmzjxgosdmfbglgger.supabase.co";
+  const SB_KEY = "sb_publishable_o-JAvblX-VTm2ojH_Em-0w_BcIzF0Om";
+  const TOTAL = 111;
+
+  // حماية بسيطة (مش أمان حقيقي)
+  const PASS = "sye2026";
+  if (prompt("كلمة سر المعلم") !== PASS) {
+    document.body.innerHTML = '<p class="empty">ممنوع الدخول</p>';
+  }
+
+  async function load() {
+    const out = document.getElementById("out");
+    out.innerHTML = '<p class="empty">جاري التحميل...</p>';
+    try {
+      const res = await fetch(SB_URL + "/rest/v1/progress?select=*&order=name.asc", {
+        headers: { apikey: SB_KEY, Authorization: "Bearer " + SB_KEY }
+      });
+      const rows = await res.json();
+      if (!rows.length) {
+        out.innerHTML = '<p class="empty">مفيش طلاب دخلوا لحد دلوقتي</p>';
+        return;
+      }
+      out.innerHTML = `
+        <table>
+          <tr><th>الاسم</th><th>التقدم</th><th>الجمل المكتملة</th><th>صح</th><th>غلط</th><th>آخر نشاط</th></tr>
+          ${rows.map(r => {
+            const stats = r.stats || {};
+            const t = Object.values(stats).reduce((a, s) => ({ c: a.c + s.c, w: a.w + s.w }), { c: 0, w: 0 });
+            const pct = Math.round((r.idx / TOTAL) * 100);
+            const when = r.updated_at ? new Date(r.updated_at).toLocaleString("ar-EG") : "-";
+            return `<tr>
+              <td>${r.name}</td>
+              <td><div class="bar"><div class="bar-fill" style="width:${pct}%"></div></div> ${pct}%</td>
+              <td>${r.idx} / ${TOTAL}</td>
+              <td class="ok">${t.c}</td>
+              <td class="bad">${t.w}</td>
+              <td>${when}</td>
+            </tr>`;
+          }).join("")}
+        </table>`;
+      document.getElementById("updated").textContent = "آخر تحديث: " + new Date().toLocaleTimeString("ar-EG");
+    } catch (e) {
+      out.innerHTML = '<p class="empty">حصل خطأ في التحميل، اتأكد من الإعدادات</p>';
+    }
+  }
+
+  document.getElementById("refresh").onclick = load;
+  load();
+  setInterval(load, 30000);
+</script>
+</body>
+</html>

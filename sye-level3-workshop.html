@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SYE Level 3 - Workshop</title>
+<style>
+  :root {
+    --bg: #f7f5f0;
+    --card: #ffffff;
+    --text: #222;
+    --muted: #6b6b6b;
+    --brand: #a52a2a;
+    --accent: #2c5d8f;
+    --ok: #2e8b57;
+    --bad: #c0392b;
+    --line: #e2dfd6;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Tahoma, Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+  header { background: var(--brand); color: #fff; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+  header h1 { font-size: 20px; margin: 0; }
+  header span { font-size: 14px; opacity: .9; direction: ltr; }
+  nav.units { display: flex; gap: 8px; padding: 14px 20px; background: #fff; border-bottom: 1px solid var(--line); flex-wrap: wrap; position: sticky; top: 0; z-index: 5; }
+  nav.units button, nav.tabs button { padding: 8px 14px; border: 1px solid var(--line); background: #fff; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 14px; }
+  nav.units button.active, nav.tabs button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  nav.tabs { display: flex; gap: 8px; padding: 12px 20px 0; flex-wrap: wrap; }
+  main { max-width: 860px; margin: 0 auto; padding: 16px 20px 60px; }
+  .unit-title { font-size: 22px; margin: 10px 0 4px; }
+  .unit-sub { color: var(--muted); margin: 0 0 16px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; margin-bottom: 14px; }
+  .card h3 { margin: 0 0 10px; color: var(--brand); font-size: 17px; }
+  .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 8px; }
+  .vocab-item { display: flex; justify-content: space-between; align-items: center; gap: 8px; background: #faf9f5; border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; direction: ltr; text-align: left; }
+  .vocab-item small { color: var(--muted); direction: rtl; }
+  .speak { border: none; background: var(--accent); color: #fff; border-radius: 6px; padding: 4px 9px; cursor: pointer; font-size: 13px; font-family: inherit; }
+  table { width: 100%; border-collapse: collapse; margin: 8px 0; direction: ltr; text-align: left; font-size: 15px; }
+  th, td { border: 1px solid var(--line); padding: 7px 10px; }
+  th { background: #f3efe6; }
+  .ex { margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px dashed var(--line); }
+  .ex:last-child { border-bottom: none; }
+  .ex .q { margin-bottom: 6px; direction: ltr; text-align: left; font-size: 16px; }
+  .choices button { margin: 3px 4px 0 0; padding: 6px 12px; border: 1px solid var(--line); background: #fff; border-radius: 6px; cursor: pointer; font-family: inherit; font-size: 15px; direction: ltr; }
+  .choices button.picked { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .fill-input { padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 15px; font-family: inherit; direction: ltr; width: 200px; }
+  .fb { margin-top: 4px; font-size: 14px; min-height: 18px; direction: ltr; text-align: left; }
+  .fb.ok { color: var(--ok); }
+  .fb.bad { color: var(--bad); }
+  .check-btn { margin-top: 8px; padding: 9px 18px; border: none; border-radius: 8px; background: var(--brand); color: #fff; cursor: pointer; font-family: inherit; font-size: 15px; }
+  .score { margin-top: 10px; font-weight: bold; }
+  .speak-card { background: #fff; border-right: 5px solid var(--accent); }
+  .speak-card p { margin: 6px 0; direction: ltr; text-align: left; }
+  .tip { color: var(--muted); font-size: 14px; }
+  ul.dots { padding-right: 20px; margin: 6px 0; }
+  ul.dots li { margin-bottom: 4px; }
+  .dict-sentence { direction: ltr; text-align: left; font-size: 30px; line-height: 1.7; font-weight: 600; min-height: 70px; word-wrap: break-word; margin: 10px 0 16px; }
+  .dict-sentence .ok { color: var(--text); }
+  .dict-sentence .next { color: var(--accent); text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 6px; }
+  .dict-sentence .todo { color: #bbb; }
+  .dict-sentence .bad { color: var(--bad) !important; }
+  .dict-sentence.hidden .dash { display: inline-block; width: 0.5em; height: 3px; margin: 0 0.05em; vertical-align: middle; border-radius: 2px; background: #bbb; }
+  .dict-sentence.hidden .dash.next { background: var(--accent); }
+  .dict-sentence.hidden .dash.bad { background: var(--bad) !important; }
+  .dict-sentence.hidden .punct { color: #999; }
+  .dict-sentence.hidden .gap { display: inline-block; width: 0.6em; }
+  .dict-input { width: 100%; padding: 10px; font-size: 18px; border: 1px solid var(--line); border-radius: 8px; direction: ltr; text-align: left; font-family: inherit; }
+  .dict-toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+  .dict-toolbar button { padding: 7px 12px; border: 1px solid var(--line); background: #fff; border-radius: 8px; cursor: pointer; font-family: inherit; }
+  .dict-dark { position: relative; background: #000; color: #f2f2f5; border-radius: 16px; padding: 22px 24px 26px; }
+  .dict-dark .d-top { display: flex; justify-content: flex-end; color: #9a9aa6; font-size: 14px; direction: ltr; margin-bottom: 8px; }
+  .dict-dark .d-bar { height: 4px; background: #1c1c24; border-radius: 4px; overflow: hidden; margin-bottom: 22px; }
+  .dict-dark .d-bar-fill { height: 100%; background: #6f8cff; transition: width 0.3s; }
+  .dict-dark .d-controls { display: flex; justify-content: center; gap: 10px; margin-bottom: 26px; flex-wrap: wrap; }
+  .dict-dark .d-pill { background: #14141a; border: 1px solid #2a2a33; color: #f2f2f5; border-radius: 999px; padding: 8px 16px; cursor: pointer; font-family: inherit; font-size: 14px; }
+  .dict-dark .d-pill:hover { border-color: #6f8cff; }
+  .dict-dark .d-line { width: 56px; height: 1px; background: #2a2a33; margin-bottom: 18px; }
+  .dict-dark .dict-sentence { direction: ltr; text-align: left; font-size: 40px; line-height: 1.6; font-weight: 600; min-height: 110px; word-wrap: break-word; cursor: text; color: #f2f2f5; }
+  .dict-dark .dict-sentence .ok { color: #f2f2f5; }
+  .dict-dark .dict-sentence .next { color: #6f8cff; text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 8px; }
+  .dict-dark .dict-sentence .todo { color: #3a3a44; }
+  .dict-dark .dict-sentence .bad { color: #ff6b6b !important; }
+  .dict-dark .dict-sentence.hidden .dash { display: inline-block; width: 0.5em; height: 3px; margin: 0 0.05em; vertical-align: middle; border-radius: 2px; background: #3a3a44; }
+  .dict-dark .dict-sentence.hidden .dash.next { background: #6f8cff; }
+  .dict-dark .dict-sentence.hidden .dash.bad { background: #ff6b6b !important; }
+  .dict-dark .dict-sentence.hidden .punct { color: #3a3a44; }
+  .dict-dark .dict-sentence.hidden .gap { display: inline-block; width: 0.6em; }
+  .dict-dark #dictTyper { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; border: none; padding: 0; }
+  .dict-dark .fb { min-height: 22px; margin-top: 12px; direction: ltr; text-align: left; font-size: 16px; color: #4cc38a; }
+  .dict-dark .fb.bad { color: #ff6b6b; }
+  .dict-dark .d-hint { color: #9a9aa6; font-size: 13px; margin-top: 18px; }
+  .dict-dark .check-btn { background: #6f8cff; }
+
+  /* ===== الوضع الداكن للموقع كله ===== */
+  body { background: #000; color: #e8e8ee; }
+  header { background: #2a0f0f; }
+  nav.units { background: #0b0b0e; border-bottom-color: #22222b; }
+  nav.units button, nav.tabs button { background: #16161c; color: #e8e8ee; border-color: #2a2a33; }
+  nav.units button:hover, nav.tabs button:hover { border-color: #6f8cff; }
+  nav.units button.active, nav.tabs button.active { background: #6f8cff; border-color: #6f8cff; color: #fff; }
+  .unit-title { color: #f2f2f5; }
+  .unit-sub, .tip { color: #9a9aa6; }
+  .card { background: #0f0f14; border-color: #22222b; }
+  .card h3 { color: #ff8a8a; }
+  .vocab-item { background: #16161c; border-color: #2a2a33; color: #e8e8ee; }
+  .vocab-item small { color: #9a9aa6; }
+  table, th, td { border-color: #2a2a33; color: #e8e8ee; }
+  th { background: #1c1c24; }
+  .ex { border-bottom-color: #2a2a33; }
+  .choices button { background: #16161c; color: #e8e8ee; border-color: #2a2a33; }
+  .choices button:hover { border-color: #6f8cff; }
+  .choices button.picked { background: #6f8cff; border-color: #6f8cff; color: #fff; }
+  .fill-input { background: #16161c; color: #e8e8ee; border-color: #2a2a33; }
+  .speak-card { background: #0f0f14; border-right-color: #6f8cff; }
+  .speak-card p { color: #e8e8ee; }
+  .check-btn { background: #6f8cff; }
+  .score { color: #e8e8ee; }
+  .fb.ok { color: #4cc38a; }
+  .fb.bad { color: #ff6b6b; }
+  .speak { background: #6f8cff; }
+  .dict-dark .dict-sentence { font-size: 30px; min-height: 140px; }
+  .dict-dark .d-nav { display: flex; justify-content: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+  .dict-dark .d-pill:disabled { opacity: 0.4; cursor: default; }
+  .dict-dark .d-stats { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; color: #9a9aa6; font-size: 14px; direction: ltr; margin-bottom: 16px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>ورشة المستوى الثالث - SYE English Community</h1>
+  <span>Level 3 Workshop</span>
+</header>
+
+<nav class="units" id="unitNav"></nav>
+<nav class="tabs" id="tabNav"></nav>
+<main id="main"></main>
+
+<script>
+  // ===== المحتوى =====
+  const UNITS = [
+    {
+      title: "الوحدة الأولى: العادات والمضارع البسيط",
+      sub: "Habits, present simple (positive & negative), why / because",
+      vocab: [
+        { en: "Wake up early", ar: "يصحى بدري", group: "Good habit" },
+        { en: "Do homework", ar: "يذاكر / يعمل الواجب", group: "Good habit" },
+        { en: "Do sports", ar: "يمارس رياضة", group: "Good habit" },
+        { en: "Brush your teeth", ar: "ينضف أسنانه", group: "Good habit" },
+        { en: "Drink water", ar: "يشرب مية", group: "Good habit" },
+        { en: "Go to the gym", ar: "يروح الجيم", group: "Good habit" },
+        { en: "Wake up late", ar: "يصحى متأخر", group: "Bad habit" },
+        { en: "Watch TV a lot", ar: "يتفرج على التلفزيون كتير", group: "Bad habit" },
+        { en: "Smoke", ar: "يدخن", group: "Bad habit" },
+        { en: "Bite your nails", ar: "يعض أظافره", group: "Bad habit" },
+        { en: "Drink a lot of coffee", ar: "يشرب قهوة كتير", group: "Bad habit" },
+        { en: "Eat lots of sugar", ar: "ياكل سكر كتير", group: "Bad habit" },
+        { en: "in the morning", ar: "في الصبح", group: "Time" },
+        { en: "in the afternoon", ar: "بعد الظهر", group: "Time" },
+        { en: "in the evening", ar: "بالليل (المساء)", group: "Time" },
+        { en: "at night", ar: "بالليل (متأخر)", group: "Time" },
+        { en: "every day", ar: "كل يوم", group: "Time" },
+        { en: "every week", ar: "كل أسبوع", group: "Time" },
+        { en: "at the weekend", ar: "في الويك إند", group: "Time" }
+      ],
+      grammar: `
+        <div class="card">
+          <h3>المضارع البسيط (Present Simple) - الإيجاب</h3>
+          <p>بنستخدمه للعادات والحاجات اللي بتتكرر. الشكل:</p>
+          <table>
+            <tr><th>Subject</th><th>Verb</th><th>Complement</th></tr>
+            <tr><td>I / we / you / they</td><td>play (base form)</td><td>football every day.</td></tr>
+            <tr><td>he / she / it</td><td>plays (+ s / es / ies)</td><td>football every day.</td></tr>
+          </table>
+          <h3>الإضافات مع he / she / it</h3>
+          <ul class="dots">
+            <li>أغلب الأفعال: + s ➜ work → works</li>
+            <li>تنتهي بـ s, sh, ch, x: + es ➜ watch → watches, fix → fixes, teach → teaches</li>
+            <li>تنتهي بـ consonant + y: غيّر y إلى ies ➜ study → studies, try → tries</li>
+            <li>تنتهي بـ vowel + y: زوّد s عادي ➜ enjoy → enjoys, stay → stays</li>
+            <li>الفعل have ➜ has</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>المضارع البسيط - النفي</h3>
+          <table>
+            <tr><th>Subject</th><th>do / does + not</th><th>verb (base form)</th></tr>
+            <tr><td>I / we / you / they</td><td>don't</td><td>play</td></tr>
+            <tr><td>he / she / it</td><td>doesn't</td><td>play (من غير s)</td></tr>
+          </table>
+          <p class="tip">مهم: بعد doesn't الفعل بيكون من غير s.</p>
+        </div>
+        <div class="card">
+          <h3>why و because</h3>
+          <p>السؤال: <b>Why do you study English?</b></p>
+          <p>الجواب: <b>Because I want to improve my speaking.</b></p>
+          <p>أو بصيغة to + verb: <b>To improve my speaking.</b></p>
+        </div>
+      `,
+      exercises: [
+        { type: "choose", q: "She ___ coffee every morning.", options: ["drink", "drinks"], answer: "drinks" },
+        { type: "choose", q: "He ___ TV at night.", options: ["watch", "watches"], answer: "watches" },
+        { type: "choose", q: "My sister ___ her teeth every morning.", options: ["brush", "brushes"], answer: "brushes" },
+        { type: "fill", q: "My brother ___ (not / go) to the gym.", answer: ["doesn't go"] },
+        { type: "fill", q: "Ahmed ___ (study) English.", answer: ["studies"] },
+        { type: "fill", q: "She ___ (not / eat) sugar.", answer: ["doesn't eat"] },
+        { type: "fill", q: "We ___ (have) breakfast at 7.", answer: ["have"] },
+        { type: "choose", q: "I ___ football at the weekend.", options: ["play", "plays"], answer: "play" },
+        { type: "fill", q: "Sara ___ (read) books before bed.", answer: ["reads"] },
+        { type: "choose", q: "Why do you study English? ___ I want to travel.", options: ["Because", "Why"], answer: "Because" }
+      ],
+      speaking: [
+        { title: "تكلم عن عاداتك الجيدة والسيئة", lines: ["I wake up early. I do sports.", "I don't smoke. I drink a lot of coffee."], tip: "اختار 7 عادات جيدة و7 سيئة وتكلم عنهم" },
+        { title: "اتكلم عن عادات شخص من أهلك", lines: ["My father wakes up early.", "My sister doesn't watch TV a lot."], tip: "الأب، الأم، الأخت، الأخ" },
+        { title: "أسئلة للحوار", lines: ["Do you bite your nails?", "Do you come to class late?", "How many hours do you sleep at night?", "What are your friends' bad habits?"], tip: "اسأل زميلك واكتب إجابته" }
+      ]
+    },
+    {
+      title: "الوحدة الثانية: الشغل في البيت والأسئلة",
+      sub: "Jobs around the house, housework, yes/no and wh- questions",
+      vocab: [
+        { en: "clean the bathroom", ar: "ينضف الحمام", group: "Chores" },
+        { en: "cook dinner / lunch", ar: "يعمل العشا / الغدا", group: "Chores" },
+        { en: "feed the dog", ar: "يطعم الكلب", group: "Chores" },
+        { en: "walk the dog", ar: "يخرج بالكلب يتمشى", group: "Chores" },
+        { en: "make the bed(s)", ar: "يرتب السرير", group: "Chores" },
+        { en: "wash the dishes", ar: "يغسل الأطباق", group: "Chores" },
+        { en: "do the washing / do the laundry", ar: "يغسل الهدوم", group: "Chores" },
+        { en: "go to the supermarket", ar: "يروح السوبر ماركت", group: "Chores" },
+        { en: "clean the bedroom", ar: "ينضف الأوضة", group: "Chores" },
+        { en: "do jobs around the house", ar: "يعمل شغل البيت", group: "Chores" }
+      ],
+      grammar: `
+        <div class="card">
+          <h3>أسئلة Yes / No (Present Simple)</h3>
+          <table>
+            <tr><th>سؤال</th><th>جواب قصير</th></tr>
+            <tr><td>Do you clean your room?</td><td>Yes, I do. / No, I don't.</td></tr>
+            <tr><td>Does your mother cook dinner?</td><td>Yes, she does. / No, she doesn't.</td></tr>
+            <tr><td>Does Elena clean the kitchen?</td><td>Yes, she does.</td></tr>
+          </table>
+          <p class="tip">القاعدة: Do مع I / you / we / they — و Does مع he / she / it. والفعل بعدهم يكون من غير s.</p>
+        </div>
+        <div class="card">
+          <h3>أسئلة Wh- (Present Simple)</h3>
+          <p>Wh-word + do / does + subject + verb (base form)</p>
+          <table>
+            <tr><th>Question</th><th>Answer</th></tr>
+            <tr><td>What do you do at home?</td><td>I wash the dishes.</td></tr>
+            <tr><td>When does your brother walk the dog?</td><td>Every morning.</td></tr>
+            <tr><td>Where does your friend work?</td><td>At a hospital.</td></tr>
+            <tr><td>How often do you clean your room?</td><td>Once a week.</td></tr>
+          </table>
+          <p class="tip">كلمات السؤال: What, Where, When, Who, Why, How often.</p>
+        </div>
+      `,
+      exercises: [
+        { type: "fill", q: "She ___ (clean) the bathroom on Fridays.", answer: ["cleans"] },
+        { type: "choose", q: "He ___ the dog every morning.", options: ["feed", "feeds"], answer: "feeds" },
+        { type: "fill", q: "___ your father cook dinner? (Does / Do)", answer: ["does"] },
+        { type: "choose", q: "___ you wash the dishes?", options: ["Do", "Does"], answer: "Do" },
+        { type: "fill", q: "Does she do the washing? Yes, she ___.", answer: ["does"] },
+        { type: "fill", q: "My mother ___ (not / make) the beds.", answer: ["doesn't make"] },
+        { type: "choose", q: "How often ___ you go to the supermarket?", options: ["do", "does"], answer: "do" },
+        { type: "fill", q: "Who ___ (cook) dinner in your house?", answer: ["cooks"] },
+        { type: "choose", q: "Which means the same as \"do the laundry\"?", options: ["do the washing", "make the bed"], answer: "do the washing" },
+        { type: "fill", q: "Where ___ your brother ___ (walk) the dog? - In the park.", answer: ["does walk"] }
+      ],
+      speaking: [
+        { title: "ما هو الشغل اللي بتعمله في البيت؟", lines: ["What housework do you do at home?", "I wash the dishes and I clean my room."], tip: "اتكلم عن نفسك" },
+        { title: "شغل أهلك في البيت", lines: ["What housework does your mum do?", "My dad walks the dog."], tip: "mum, dad, sister, brother" },
+        { title: "Find someone who...", lines: ["Do you clean your room?  How often do you clean your room?", "Does your mother do the laundry?  When does she do the laundry?"], tip: "اسأل زملاءك واكتب المعلومات: Where / When / What / how often / why" }
+      ]
+    },
+    {
+      title: "الوحدة الثالثة: الماضي البسيط",
+      sub: "Past simple (regular & irregular), was/were, ed sounds, past questions",
+      vocab: [
+        { en: "get up / got up", ar: "صحي", group: "Irregular" },
+        { en: "break / broke", ar: "كسر", group: "Irregular" },
+        { en: "take / took", ar: "أخد", group: "Irregular" },
+        { en: "buy / bought", ar: "اشترى", group: "Irregular" },
+        { en: "meet / met", ar: "قابل", group: "Irregular" },
+        { en: "lose / lost", ar: "ضيّع", group: "Irregular" },
+        { en: "feel / felt", ar: "حس", group: "Irregular" },
+        { en: "speak / spoke", ar: "اتكلم", group: "Irregular" },
+        { en: "have / had", ar: "كان عنده / أكل (قعد)", group: "Irregular" },
+        { en: "go / went", ar: "راح", group: "Irregular" },
+        { en: "run / ran", ar: "جرى", group: "Irregular" },
+        { en: "eat / ate", ar: "أكل", group: "Irregular" },
+        { en: "forget / forgot", ar: "نسي", group: "Irregular" },
+        { en: "see / saw", ar: "شاف", group: "Irregular" },
+        { en: "visit / visited", ar: "زار", group: "Regular" },
+        { en: "watch / watched", ar: "اتفرج", group: "Regular" },
+        { en: "play / played", ar: "لعب", group: "Regular" },
+        { en: "study / studied", ar: "ذاكر", group: "Regular" }
+      ],
+      grammar: `
+        <div class="card">
+          <h3>الماضي البسيط - الإيجاب</h3>
+          <p>Subject + verb (past) + complement</p>
+          <ul class="dots">
+            <li>Regular: + ed ➜ walk → walked, visit → visited</li>
+            <li>Regular تنتهي بـ e: + d ➜ live → lived</li>
+            <li>Regular تنتهي بـ consonant + y: ➜ study → studied</li>
+            <li>Irregular: لازم تحفظها (زي الجدول اللي فوق)</li>
+          </ul>
+          <h3>نطق ed</h3>
+          <table>
+            <tr><th>/t/</th><th>/d/</th><th>/id/</th></tr>
+            <tr><td>helped, watched, washed, laughed</td><td>called, played, cleaned, loved</td><td>waited, needed (آخر حرف d أو t)</td></tr>
+          </table>
+          <p class="tip">لو آخر صوت في الكلمة "مهموس" (زي p, k, s, sh, ch) ➜ /t/. لو "مجهور" (زي l, v, m, n) ➜ /d/.</p>
+        </div>
+        <div class="card">
+          <h3>الماضي البسيط - النفي والسؤال</h3>
+          <table>
+            <tr><th>Type</th><th>Pattern</th><th>Example</th></tr>
+            <tr><td>Negative</td><td>Subject + didn't + verb (base)</td><td>I didn't walk late last night.</td></tr>
+            <tr><td>Question</td><td>Did + subject + verb (base)?</td><td>Did you go to the cinema?</td></tr>
+            <tr><td>Short answer</td><td>Yes, I did. / No, I didn't.</td><td></td></tr>
+          </table>
+        </div>
+        <div class="card">
+          <h3>was / were</h3>
+          <table>
+            <tr><th>I / he / she / it</th><th>you / we / they</th></tr>
+            <tr><td>was / wasn't</td><td>were / weren't</td></tr>
+          </table>
+          <p>Was the train busy? - Yes, it was. / No, it wasn't.</p>
+          <p>The train was busy yesterday.</p>
+        </div>
+      `,
+      exercises: [
+        { type: "fill", q: "I ___ (visit) my grandmother last week.", answer: ["visited"] },
+        { type: "fill", q: "We ___ (not / watch) TV yesterday.", answer: ["didn't watch"] },
+        { type: "fill", q: "I ___ (go) to Alexandria last summer.", answer: ["went"] },
+        { type: "fill", q: "He ___ (get up) late this morning.", answer: ["got up"] },
+        { type: "choose", q: "Did you ___ the bus this morning?", options: ["take", "took"], answer: "take" },
+        { type: "choose", q: "\"watched\" is pronounced with the sound:", options: ["/t/", "/d/", "/id/"], answer: "/t/" },
+        { type: "choose", q: "\"played\" is pronounced with the sound:", options: ["/t/", "/d/", "/id/"], answer: "/d/" },
+        { type: "fill", q: "The train ___ (be) busy yesterday.", answer: ["was"] },
+        { type: "fill", q: "They ___ (not / be) at home last night.", answer: ["weren't"] },
+        { type: "fill", q: "Was the train busy? - Yes, it ___.", answer: ["was"] }
+      ],
+      speaking: [
+        { title: "What did you do when you were a child?", lines: ["When I was a child, I lived in a village.", "I played football with my friends after school."], tip: "اتكلم عن: قرية/مدينة، المدرسة، المواصلات، المدرسين، الألعاب، الأصحاب" },
+        { title: "Talk about a bad day", lines: ["When: Yesterday / Last Friday", "Where: At work / At the cinema", "What: I lost my phone and I forgot a meeting."], tip: "املا الجدول: When? / Where? / What?" },
+        { title: "Someone's childhood", lines: ["She lived in a big town.", "She travelled to school by bus.", "She didn't like tennis."], tip: "استخدم الماضي البسيط في كل جملة" }
+      ]
+    }
+  ];
+
+  // ===== جمل الإملاء لكل وحدة =====
+  const DICTATION = [
+    [
+      "I wake up early every morning because I want to do my homework before school.",
+      "My sister brushes her teeth twice a day and she drinks a lot of water.",
+      "My father doesn't smoke, but he drinks a lot of coffee in the afternoon.",
+      "Ahmed goes to the gym every week, and he plays football with his friends at the weekend.",
+      "We do sports in the evening because we like to stay healthy and active.",
+      "She never bites her nails, and she always eats fruit for breakfast.",
+      "My brother doesn't wake up early, so he often misses the first class at university.",
+      "In the afternoon, I study English for an hour, and then I help my mother in the kitchen.",
+      "Why do you wake up so early? Because I start work at seven in the morning.",
+      "Why does she watch TV every night? Because she likes American series and comedy shows.",
+      "Do you eat lots of sugar? No, I don't, because I try to eat healthy food every day.",
+      "Does your friend drink coffee at night? Yes, he does, but it keeps him awake.",
+      "My grandmother walks in the park every morning and she feeds the birds there.",
+      "They study English at the library every Tuesday, and they practise speaking with their teacher.",
+      "We don't go to the supermarket on Fridays because the shops are usually closed.",
+      "My little sister watches cartoons after school, but she doesn't watch TV in the morning.",
+      "I usually drink water when I wake up, and then I eat a light breakfast with bread and cheese.",
+      "Does your teacher give you homework every day? Yes, she does, and she checks it every Thursday.",
+      "Tina doesn't do sports, but she walks to work every day, which keeps her fit.",
+      "At night, my dad reads the newspaper, and my mum watches a film on the sofa.",
+      "Smoking is a bad habit, and many people try to stop it because it damages their health.",
+      "He goes to bed at eleven o'clock because he needs to get up early for work.",
+      "Good habits, like sleeping well and exercising regularly, make a big difference to your life.",
+      "My friends and I meet at the cafe on Saturdays, and we talk about our plans for the weekend.",
+      "I don't eat chocolate every day, but I eat fruit and vegetables for lunch every day.",
+      "Does your brother play tennis at the weekend? No, he doesn't; he prefers to watch football on TV.",
+      "In the evening we cook dinner together, and then we wash the dishes and relax.",
+      "My cousin studies medicine at university, and she works at a hospital on Sundays.",
+      "Why don't you drink more water? Because I forget to drink it during the day.",
+      "Every week, we visit our grandparents, and they always cook a delicious meal for us.",
+      "She takes the bus to school in the morning, but she walks home in the afternoon.",
+      "I brush my teeth before bed every night, because my dentist told me it is important.",
+      "Do you usually go to the gym in the morning or in the evening?",
+      "My neighbour waters his plants every evening, and he listens to the radio while he works in the garden.",
+      "Mohamed doesn't watch TV late at night, because he wants to sleep well before his exam.",
+      "They drink tea at four o'clock every afternoon, and they talk about their day together.",
+      "I try to do sports every weekend, because exercise gives me energy and makes me happy."
+    ],
+    [
+      "My mother cleans the bathroom every Friday, and she washes the floors in the kitchen too.",
+      "Does your father cook dinner for the family on weekdays, or does your mother do it?",
+      "My sister feeds the cat in the morning and she walks the dog in the evening.",
+      "I don't make my bed on Sundays because I usually sleep late and I'm always in a hurry.",
+      "Where does your brother walk the dog every afternoon? He walks him in the park near our house.",
+      "How often do you go to the supermarket? I usually go there once a week with my mother.",
+      "Does she do the laundry on Saturdays? Yes, she does, and she hangs the clothes on the balcony.",
+      "Who washes the dishes after dinner in your house? My brother washes them, and I dry them.",
+      "When does your father do the shopping? He does it on Thursday evenings after work.",
+      "Do you clean your bedroom every week, or do you clean it only when your mum asks you?",
+      "My grandfather makes the beds every morning, and he sweeps the balcony before breakfast.",
+      "Why does your sister clean the kitchen so often? Because she likes it to be tidy and clean.",
+      "Our neighbour cooks lunch for her children every day, and she makes delicious soup on Fridays.",
+      "Does your friend do jobs around the house? Yes, he does, but he doesn't like cleaning the bathroom.",
+      "My brother doesn't do the washing because he says the machine is too complicated for him.",
+      "What housework does your mum do in the morning? She cooks breakfast and makes the beds.",
+      "Do you feed the cat or the dog at home? I feed both of them, but my sister walks the dog.",
+      "Ahmed cleans his car every weekend and he washes the dishes after lunch on Sundays.",
+      "Does your teacher clean the classroom at the end of the day? No, she doesn't; the students do it.",
+      "How often does your father clean the windows? He cleans them twice a month in the summer.",
+      "Where do you wash your clothes? I wash them in the washing machine in the laundry room.",
+      "My mother doesn't go to the supermarket alone because she always takes the whole family.",
+      "When does your sister cook dinner? She cooks it at about eight o'clock, after she finishes her homework.",
+      "Do you help your parents with the housework every day, or only at the weekend?",
+      "Her husband cleans the living room and vacuums the carpet while she prepares the lunch.",
+      "Does your brother make his bed every morning? No, he doesn't, and his room is always messy.",
+      "Who feeds the fish in your house? My younger sister feeds them every evening before dinner.",
+      "We clean the house together on Saturday mornings, and then we go out for a walk.",
+      "What does your dad do at the weekend? He washes the car, and he walks the dog in the park.",
+      "Does your mum wash the dishes in the evening? Yes, she does, but sometimes my dad helps her.",
+      "How often does your family do the laundry? We do it twice a week, usually on Monday and Thursday.",
+      "My uncle lives alone, so he cooks his own meals, cleans his flat, and does his own washing.",
+      "Do you go to the supermarket on your way home from work? Yes, I do, because it is very close.",
+      "Where does your friend cook lunch when she has guests? She usually cooks it in her kitchen at home.",
+      "Does your son make his bed before school? Yes, he does, because his teacher asks him to.",
+      "What chores does your brother do at home? He takes out the rubbish and he washes the car.",
+      "Who cooks the dinner when your mother is busy? My father cooks it, and he makes very good pasta."
+    ],
+    [
+      "Last summer I travelled to Alexandria with my family, and we stayed in a small hotel near the beach.",
+      "Yesterday I got up late, so I missed the bus and I took a taxi to work.",
+      "When I was a child, I lived in a village, and I walked to school every morning with my friends.",
+      "We didn't watch TV last night because the power was cut for about two hours.",
+      "She visited her grandmother in Tanta last weekend and she cooked a special meal for the family.",
+      "The train was very busy this morning, so I stood next to the door for the whole journey.",
+      "They weren't at home last night because they went to a wedding in the countryside.",
+      "Did you take the bus to university yesterday, or did you walk along the river?",
+      "I forgot my keys at the office, so I had to wait outside for an hour until my brother arrived.",
+      "He played football with his friends after school, and then he went home to eat lunch.",
+      "Did she buy a new phone last month? Yes, she did, and she lost her old one at the cinema.",
+      "Last week we met our English teacher at the cafe, and we talked about our holidays.",
+      "When I was young, my family didn't have a car, so we travelled to school by bus every day.",
+      "Did your sister study English at school? No, she didn't; she started learning it at university.",
+      "I felt very tired after the long exam, so I went straight to bed and slept for ten hours.",
+      "My father worked in a factory for twenty years before he opened his own small shop.",
+      "We ate a delicious dinner at the new restaurant downtown, but the service was very slow.",
+      "Did they speak English during the meeting yesterday? Yes, they did, and everybody understood them.",
+      "Last winter it rained a lot, and the streets were full of water for almost three weeks.",
+      "The children watched a film at the cinema, and afterwards they went to the park to play.",
+      "I saw an old friend at the market this morning, and we talked about our childhood memories.",
+      "Where did you go last summer? I went to the mountains with my cousins, and we camped near a lake.",
+      "She didn't like her school uniform, but she wore it every day because her parents asked her to.",
+      "Why were you late this morning? Because the bus broke down in the middle of the road.",
+      "He ran to the station because he didn't want to miss the last train to Cairo.",
+      "Our neighbours bought a new car last year, and they drove it to the coast every weekend.",
+      "My grandparents lived in a small town when they were young, and they had very few visitors.",
+      "Did you get up early on Friday? No, I didn't; I stayed in bed until eleven o'clock.",
+      "After the wedding, the couple went on a honeymoon to Dahab, and they swam in the sea every day.",
+      "I lost my wallet on the bus, but a kind driver found it and returned it to me the next day.",
+      "Were you at home yesterday evening? No, I wasn't; I was at the gym with my friends.",
+      "The teacher was happy with our project, and she gave us an excellent mark for our presentation.",
+      "When did you first meet your best friend? We met in primary school, when we were about eight years old.",
+      "Last month my brother got a job at a bank, and he now works from nine to five.",
+      "The students didn't understand the question, so they asked the teacher to explain it again.",
+      "We cooked a big meal for the family, and everyone said it was the best food they had eaten all year.",
+      "Did your parents visit you at university last semester? Yes, they came twice, and they brought us lots of food."
+    ]
+  ];
+
+  // ===== الحالة =====
+  const ALL_DICT = DICTATION.flat();
+
+  // ===== حفظ التقدم والعدادات في المتصفح =====
+  const DICT_KEY = "sye_dict_progress_v1";
+  let dictStats = {};
+  // ===== قاعدة البيانات (Supabase) =====
+  // حط الرابط والمفتاح بتوعك هنا
+  const SB_URL = "https://atkmzjxgosdmfbglgger.supabase.co";
+  const SB_KEY = "sb_publishable_o-JAvblX-VTm2ojH_Em-0w_BcIzF0Om";
+
+  let studentName = localStorage.getItem("sye_name") || "";
+
+  async function sbFetch(path, opts = {}) {
+    try {
+      const res = await fetch(SB_URL + "/rest/v1/" + path, {
+        ...opts,
+        headers: {
+          apikey: SB_KEY,
+          Authorization: "Bearer " + SB_KEY,
+          "Content-Type": "application/json",
+          ...(opts.headers || {})
+        }
+      });
+      if (!res.ok) return null;
+      return res.status === 204 ? true : res.json();
+    } catch (e) {
+      return null;
+    }
+  }
+
+  async function loadDict() {
+    if (!studentName) return;
+    const rows = await sbFetch("progress?name=eq." + encodeURIComponent(studentName) + "&select=*");
+    if (rows && rows[0]) {
+      dictIdx = Math.min(Math.max(0, rows[0].idx || 0), ALL_DICT.length);
+      dictStats = rows[0].stats || {};
+    }
+  }
+
+  let saveTimer = null;
+  function saveDict() {
+    if (!studentName) return;
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+      sbFetch("progress?on_conflict=name", {
+        method: "POST",
+        headers: { Prefer: "resolution=merge-duplicates" },
+        body: JSON.stringify({
+          name: studentName,
+          idx: dictIdx,
+          stats: dictStats,
+          updated_at: new Date().toISOString()
+        })
+      });
+    }, 300);
+  }
+
+  // أول مرة الطالب يدخل بيكتب اسمه
+  function renderNameScreen() {
+    document.getElementById("main").innerHTML =
+      '<div class="card">' +
+        '<h3>اكتب اسمك عشان تبدأ</h3>' +
+        '<p class="tip">الاسم هيتحفظ وتقدمك هيتابع من عليه.</p>' +
+        '<input id="nameIn" class="fill-input" style="width:100%" placeholder="الاسم بالكامل">' +
+        '<div><button class="check-btn" id="nameGo">ابدأ</button></div>' +
+      '</div>';
+    document.getElementById("nameGo").onclick = async () => {
+      const v = document.getElementById("nameIn").value.trim();
+      if (!v) return;
+      studentName = v;
+      localStorage.setItem("sye_name", v);
+      await loadDict();
+      tabName = "dictation";
+      renderAll();
+    };
+  }
+  function statOf(i) {
+    if (!dictStats[i]) dictStats[i] = { c: 0, w: 0 };
+    return dictStats[i];
+  }
+  function totals() {
+    return Object.values(dictStats).reduce((a, s) => ({ c: a.c + s.c, w: a.w + s.w }), { c: 0, w: 0 });
+  }
+  let dictIdx = 0;
+  let dictVisible = true;
+  let dPos = 0;
+  let dFlash = -1;
+  let dFlashTimer = null;
+  let dLocked = false;
+  let dKey = null;
+
+  // تنظيف النص قبل النطق: "/" تتقري "أو"، والأقواس تتشال
+  function cleanForSpeech(t) {
+    return t.replace(/\(s\)/g, "s").replace(/\//g, " or ").replace(/[()]/g, "").replace(/\s+/g, " ").trim();
+  }
+
+  function dTarget() { return ALL_DICT[dictIdx]; }
+  function isPunctD(ch) { return !/[A-Za-z ]/.test(ch); }
+  function skipPunctD(p) {
+    const t = dTarget();
+    while (p < t.length && isPunctD(t[p])) p++;
+    return p;
+  }
+  function typeCharD(ch) {
+    const t = dTarget();
+    if (dPos >= t.length) return false;
+    if (ch.toLowerCase() === t[dPos].toLowerCase()) {
+      dPos = skipPunctD(dPos + 1);
+      return true;
+    }
+    return false;
+  }
+  function backspaceD() {
+    const t = dTarget();
+    let p = dPos - 1;
+    while (p > 0 && isPunctD(t[p])) p--;
+    dPos = Math.max(0, p);
+  }
+
+  function renderDictSentence() {
+    const t = dTarget();
+    const el = document.getElementById("dictSentence");
+    if (!el) return;
+    el.className = "dict-sentence" + (dictVisible ? "" : " hidden");
+    let html = "";
+    for (let i = 0; i < t.length; i++) {
+      const ch = t[i];
+      if (ch === " ") {
+        html += dictVisible ? " " : '<span class="gap"></span>';
+        continue;
+      }
+      const done = i < dPos;
+      const next = i === dPos;
+      const bad = i === dFlash;
+      if (dictVisible) {
+        let cls = done ? "ok" : next ? "next" : "todo";
+        if (bad) cls = "bad";
+        html += '<span class="' + cls + '">' + ch + '</span>';
+      } else if (done) {
+        html += '<span class="ok">' + ch + '</span>';
+      } else if (isPunctD(ch)) {
+        html += '<span class="punct">/</span>';
+      } else {
+        let cls = "dash";
+        if (next) cls += " next";
+        if (bad) cls += " bad";
+        html += '<span class="' + cls + '"></span>';
+      }
+    }
+    el.innerHTML = html;
+  }
+
+  function renderDictationShell() {
+    const list = ALL_DICT;
+    const st = statOf(dictIdx);
+    const tot = totals();
+    if (dictIdx >= list.length) {
+      return '<div class="card"><h3>خلّصت تمرين الإملاء ✓</h3><button class="check-btn" id="dictRestart">ابدأ من جديد</button></div>';
+    }
+    return '<div class="dict-dark">' +
+      '<div class="d-top"><span>' + (dictIdx + 1) + ' / ' + list.length + '</span></div>' +
+      '<div class="d-bar"><div class="d-bar-fill" style="width:' + (dictIdx / list.length * 100) + '%"></div></div>' +
+      '<div class="d-controls">' +
+        '<button class="d-pill" id="dictToggle">' + (dictVisible ? "النص ظاهر" : "النص مخفي") + '</button>' +
+        '<button class="d-pill" id="dictReplay">🎧 أعد الاستماع (Shift)</button>' +
+      '</div>' +
+      '<div class="d-nav">' +
+        '<button class="d-pill" id="dictPrev"' + (dictIdx === 0 ? ' disabled' : '') + '>← السابقة</button>' +
+        '<button class="d-pill" id="dictRedo">↻ أعد كتابة الجملة</button>' +
+        '<button class="d-pill" id="dictSkip">التالية →</button>' +
+      '</div>' +
+      '<div class="d-stats">' +
+        '<span>الجملة: ✓ ' + st.c + ' | ✗ ' + st.w + '</span>' +
+        '<span>المجموع: ✓ ' + tot.c + ' | ✗ ' + tot.w + '</span>' +
+      '</div>' +
+      '<div class="d-line"></div>' +
+      '<div class="dict-sentence" id="dictSentence"></div>' +
+      '<input id="dictTyper" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">' +
+      '<div class="fb" id="dictFb"></div>' +
+      '<div class="d-hint">اضغط على الجملة وابدأ تكتب. علامات الترقيم بتتكمل لوحدها، والحرف الغلط مش هيتكتب.</div>' +
+    '</div>';
+  }
+
+  function wireDictation() {
+    const rb = document.getElementById("dictRestart");
+    if (rb) {
+      rb.onclick = () => { dictIdx = 0; renderAll(); };
+      return;
+    }
+    const typer = document.getElementById("dictTyper");
+    if (!typer) return;
+
+    // نبدأ الجملة من أول الكتابة لما الجملة تتغير بس
+    const key = dictIdx;
+    if (dKey !== key) {
+      dKey = key;
+      dPos = skipPunctD(0);
+      dFlash = -1;
+      dLocked = false;
+      speak(dTarget());
+    }
+    renderDictSentence();
+    document.getElementById("dictSentence").onclick = () => typer.focus();
+    typer.focus();
+
+    typer.addEventListener("input", e => {
+      const raw = typer.value;
+      typer.value = "";
+      if (dLocked) return;
+
+      if (e.inputType && e.inputType.startsWith("delete")) {
+        backspaceD();
+        dFlash = -1;
+        renderDictSentence();
+        return;
+      }
+
+      let wrong = false;
+      for (const ch of raw) {
+        if (typeCharD(ch)) {
+          statOf(dictIdx).c++;
+        } else {
+          statOf(dictIdx).w++;
+          wrong = true;
+          break;
+        }
+      }
+      saveDict();
+      if (wrong) {
+        dFlash = dPos;
+        clearTimeout(dFlashTimer);
+        dFlashTimer = setTimeout(() => { dFlash = -1; renderDictSentence(); }, 350);
+      }
+      renderDictSentence();
+
+      if (dPos >= dTarget().length) {
+        dLocked = true;
+        const fb = document.getElementById("dictFb");
+        fb.className = "fb ok";
+        fb.textContent = "✓ صح";
+        setTimeout(() => { dictIdx++; saveDict(); renderAll(); }, 700);
+      }
+    });
+
+    typer.addEventListener("keydown", e => {
+      if (e.key === "Backspace") {
+        e.preventDefault();
+        backspaceD();
+        dFlash = -1;
+        renderDictSentence();
+      }
+    });
+
+    document.getElementById("dictPrev").onclick = () => {
+      if (dictIdx > 0) { dictIdx--; saveDict(); renderAll(); }
+    };
+    document.getElementById("dictRedo").onclick = () => {
+      dPos = skipPunctD(0);
+      dFlash = -1;
+      dLocked = false;
+      renderDictSentence();
+      typer.focus();
+    };
+    document.getElementById("dictSkip").onclick = () => {
+      dictIdx = Math.min(dictIdx + 1, ALL_DICT.length);
+      saveDict();
+      renderAll();
+    };
+    document.getElementById("dictReplay").onclick = () => speak(dTarget());
+    document.getElementById("dictToggle").onclick = () => {
+      dictVisible = !dictVisible;
+      renderAll();
+    };
+  }
+
+  // Shift يعيد تشغيل جملة الإملاء
+  document.addEventListener("keydown", e => {
+    if (e.key === "Shift" && !e.repeat && tabName === "dictation" && dictIdx < ALL_DICT.length) {
+      speak(dTarget());
+    }
+  });
+
+  // ===== الحالة الأصلية =====
+  let unitIndex = 0;
+  let tabName = "vocab";
+  const TABS = [
+    { id: "vocab", label: "الكلمات" },
+    { id: "grammar", label: "القواعد" },
+    { id: "exercises", label: "التمارين" },
+    { id: "speaking", label: "الكلام" },
+    { id: "dictation", label: "الإملاء" }
+  ];
+
+  // ===== الصوت =====
+  // اختيار أطبع صوت إنجليزي متاح على الجهاز
+  let cachedVoice = null;
+  function getVoice() {
+    if (cachedVoice) return cachedVoice;
+    const all = speechSynthesis.getVoices();
+    const en = all.filter(v => /^en/i.test(v.lang));
+    const prefs = [/natural/i, /google us english/i, /aria|jenny|guy|ava|emma|michelle|andrew/i, /samantha|zira|david/i];
+    for (const p of prefs) {
+      const found = en.find(v => p.test(v.name));
+      if (found) { cachedVoice = found; return found; }
+    }
+    cachedVoice = en[0] || null;
+    return cachedVoice;
+  }
+  if ("speechSynthesis" in window) {
+    speechSynthesis.onvoiceschanged = () => { cachedVoice = null; };
+  }
+
+  function speak(text) {
+    if (!("speechSynthesis" in window)) return;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(cleanForSpeech(text));
+    const voice = getVoice();
+    if (voice) u.voice = voice;
+    u.lang = voice ? voice.lang : "en-US";
+    u.rate = 0.85;
+    u.pitch = 1;
+    speechSynthesis.speak(u);
+  }
+
+  // ===== الرسم =====
+  function renderNav() {
+    const unitNav = document.getElementById("unitNav");
+    unitNav.innerHTML = UNITS.map((u, i) =>
+      `<button class="${i === unitIndex ? "active" : ""}" data-u="${i}">${u.title.split(":")[0]}</button>`
+    ).join("");
+    unitNav.querySelectorAll("button").forEach(b => b.onclick = () => {
+      unitIndex = Number(b.dataset.u);
+      renderAll();
+    });
+
+    const tabNav = document.getElementById("tabNav");
+    tabNav.innerHTML = TABS.map(t =>
+      `<button class="${t.id === tabName ? "active" : ""}" data-t="${t.id}">${t.label}</button>`
+    ).join("");
+    tabNav.querySelectorAll("button").forEach(b => b.onclick = () => {
+      tabName = b.dataset.t;
+      renderAll();
+    });
+  }
+
+  function renderVocab(u) {
+    const groups = [...new Set(u.vocab.map(v => v.group))];
+    return groups.map(g => `
+      <div class="card">
+        <h3>${g}</h3>
+        <div class="vocab-grid">
+          ${u.vocab.filter(v => v.group === g).map(v => `
+            <div class="vocab-item">
+              <button class="speak" data-say="${v.en}">🔊</button>
+              <span>${v.en}</span>
+              <small>${v.ar}</small>
+            </div>`).join("")}
+        </div>
+      </div>`).join("");
+  }
+
+  function renderExercises(u) {
+    return `
+      <div class="card" id="exCard">
+        ${u.exercises.map((ex, i) => {
+          if (ex.type === "choose") {
+            return `<div class="ex" data-i="${i}">
+              <div class="q">${i + 1}. ${ex.q}</div>
+              <div class="choices">${ex.options.map(o => `<button data-v="${o}">${o}</button>`).join("")}</div>
+              <div class="fb"></div>
+            </div>`;
+          }
+          return `<div class="ex" data-i="${i}">
+            <div class="q">${i + 1}. ${ex.q}</div>
+            <input class="fill-input" type="text" autocomplete="off" spellcheck="false">
+            <div class="fb"></div>
+          </div>`;
+        }).join("")}
+        <button class="check-btn" id="checkBtn">تحقق من الإجابات</button>
+        <div class="score" id="scoreBox"></div>
+      </div>`;
+  }
+
+  function wireExercises(u) {
+    const picked = {};
+    document.querySelectorAll("#exCard .ex").forEach(box => {
+      const i = Number(box.dataset.i);
+      const ex = u.exercises[i];
+      if (ex.type === "choose") {
+        box.querySelectorAll(".choices button").forEach(b => b.onclick = () => {
+          box.querySelectorAll(".choices button").forEach(x => x.classList.remove("picked"));
+          b.classList.add("picked");
+          picked[i] = b.dataset.v;
+        });
+      }
+    });
+
+    document.getElementById("checkBtn").onclick = () => {
+      let correct = 0;
+      document.querySelectorAll("#exCard .ex").forEach(box => {
+        const i = Number(box.dataset.i);
+        const ex = u.exercises[i];
+        const fb = box.querySelector(".fb");
+        let val;
+        if (ex.type === "choose") {
+          val = picked[i];
+        } else {
+          val = box.querySelector("input").value.trim().toLowerCase();
+        }
+        if (!val) {
+          fb.className = "fb";
+          fb.textContent = "";
+          return;
+        }
+        const answers = ex.type === "choose" ? [ex.answer] : ex.answer;
+        const ok = answers.map(a => a.toLowerCase()).includes(val.toLowerCase());
+        if (ok) correct++;
+        fb.className = "fb " + (ok ? "ok" : "bad");
+        fb.textContent = ok ? "✓ صح" : "✗ الإجابة الصحيحة: " + (ex.type === "choose" ? ex.answer : ex.answer[0]);
+      });
+      document.getElementById("scoreBox").textContent =
+        "النتيجة: " + correct + " من " + u.exercises.length;
+    };
+  }
+
+  function renderSpeaking(u) {
+    return u.speaking.map(s => `
+      <div class="card speak-card">
+        <h3>${s.title}</h3>
+        ${s.lines.map(l => `<p>${l}</p>`).join("")}
+        <p class="tip">${s.tip}</p>
+      </div>`).join("");
+  }
+
+  function renderAll() {
+    renderNav();
+    const u = UNITS[unitIndex];
+    const main = document.getElementById("main");
+    let body = "";
+
+    if (tabName === "vocab") body = renderVocab(u);
+    else if (tabName === "grammar") body = u.grammar;
+    else if (tabName === "exercises") body = renderExercises(u);
+    else if (tabName === "speaking") body = renderSpeaking(u);
+    else if (tabName === "dictation") body = renderDictationShell();
+
+    main.innerHTML = `
+      <div class="unit-title">${u.title}</div>
+      <p class="unit-sub">${u.sub}</p>
+      ${body}`;
+
+    main.querySelectorAll(".speak").forEach(b => b.onclick = () => speak(b.dataset.say));
+    if (tabName === "exercises") wireExercises(u);
+    if (tabName === "dictation") wireDictation();
+  }
+
+  if (studentName) {
+    loadDict().then(renderAll);
+  } else {
+    renderNameScreen();
+  }
+</script>
+</body>
+</html>
