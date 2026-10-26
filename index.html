@@ -79,6 +79,7 @@
 <header>
   <h1>SYE Level 3 Workshop</h1>
   <span>English Community</span>
+  <button onclick="localStorage.removeItem('sye_name');location.reload()" style="padding:6px 12px;border-radius:8px;border:1px solid #fff;background:transparent;color:#fff;cursor:pointer;font-family:inherit;">Change name</button>
 </header>
 
 <nav class="units" id="unitNav"></nav>
@@ -521,7 +522,45 @@
   }
 
   // Extra sentences and words added by the admin
+  // Format: fill | question | answer1 ; answer2
+  //         choose | question | option1 ; option2 | correct option
+  function parseExercises(text) {
+    return text.split("\n").map(l => l.trim()).filter(Boolean).map(line => {
+      const p = line.split("|").map(s => s.trim());
+      if (p[0] === "choose") {
+        return { type: "choose", q: p[1] || "", options: (p[2] || "").split(";").map(s => s.trim()).filter(Boolean), answer: p[3] || "" };
+      }
+      return { type: "fill", q: p[1] || "", answer: (p[2] || "").split(";").map(s => s.trim()).filter(Boolean) };
+    }).filter(e => e.q);
+  }
+
+  // Format: title | line one ; line two | tip
+  function parseSpeaking(text) {
+    return text.split("\n").map(l => l.trim()).filter(Boolean).map(line => {
+      const p = line.split("|").map(s => s.trim());
+      return { title: p[0] || "", lines: (p[1] || "").split(";").map(s => s.trim()).filter(Boolean), tip: p[2] || "" };
+    });
+  }
+
+  // One line per paragraph
+  function formatGrammar(text) {
+    const lines = text.split("\n").map(l => l.trim()).filter(Boolean);
+    return '<div class="card">' + lines.map(l => '<p>' + escapeText(l) + '</p>').join("") + '</div>';
+  }
+
   async function loadExtras() {
+    // Units created by the admin (they come after the built-in units, in order)
+    const units = await sbFetch("units?select=*&order=unit_no.asc");
+    if (units) {
+      units.forEach(u => UNITS.push({
+        title: u.title,
+        sub: u.sub || "",
+        vocab: [],
+        grammar: formatGrammar(u.grammar || ""),
+        exercises: parseExercises(u.exercises || ""),
+        speaking: parseSpeaking(u.speaking || "")
+      }));
+    }
     const [sents, words] = await Promise.all([
       sbFetch("sentences?select=*&order=position.asc,id.asc"),
       sbFetch("words?select=*&order=id.asc")
@@ -543,8 +582,21 @@
     myMessages = rows || [];
   }
 
+  // Create a row for the student in the database if they are new
+  async function ensureStudentRow() {
+    const rows = await sbFetch("progress?name=eq." + encodeURIComponent(studentName) + "&select=name");
+    if (rows && rows.length === 0) {
+      await sbFetch("progress", {
+        method: "POST",
+        headers: { Prefer: "return=minimal" },
+        body: JSON.stringify({ name: studentName, idx: 0, stats: {}, updated_at: new Date().toISOString() })
+      });
+    }
+  }
+
   async function loadDict() {
     if (!studentName) return;
+    await ensureStudentRow();
     const rows = await sbFetch("progress?name=eq." + encodeURIComponent(studentName) + "&select=*");
     if (rows && rows[0]) {
       dictIdx = Math.min(Math.max(0, rows[0].idx || 0), ALL_DICT.length);
@@ -575,6 +627,11 @@
 
   // ===== Navigation =====
   function renderNav() {
+    if (!studentName) {
+      document.getElementById("unitNav").innerHTML = "";
+      document.getElementById("tabNav").innerHTML = "";
+      return;
+    }
     document.getElementById("unitNav").innerHTML = UNITS.map((u, i) =>
       `<button class="${i === unitIndex ? "active" : ""}" data-u="${i}">Unit ${i + 1}</button>`
     ).join("");
@@ -945,6 +1002,15 @@
       tabName = "dictation";
     }
     renderAll();
+
+    // كل دقيقة يشوف إذا فيه رسالة جديدة
+    setInterval(async () => {
+      if (!studentName) return;
+      const before = myMessages.map(m => m.id).join(",");
+      await loadMessages();
+      const after = myMessages.map(m => m.id).join(",");
+      if (before !== after) renderAll();
+    }, 60000);
   }
   boot();
 </script>
