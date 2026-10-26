@@ -49,6 +49,7 @@
     <button id="tabSentences" class="ghost">الجمل</button>
     <button id="tabMessages" class="ghost">الرسائل</button>
     <button id="tabWords" class="ghost">الكلمات</button>
+    <button id="tabUnits" class="ghost">الوحدات</button>
     <button id="logoutBtn" class="ghost">خروج</button>
   </div>
 
@@ -65,12 +66,35 @@
       <option value="1">الوحدة الأولى</option>
       <option value="2">الوحدة الثانية</option>
       <option value="3">الوحدة الثالثة</option>
+      <option value="4">Unit 4</option>
+      <option value="5">Unit 5</option>
+      <option value="6">Unit 6</option>
+      <option value="7">Unit 7</option>
+      <option value="8">Unit 8</option>
     </select>
     <textarea id="sentenceIn" class="en" placeholder="Write the English sentence here"></textarea>
     <button id="addSentence">أضف الجملة</button>
     <div class="err" id="sentenceErr"></div>
     <h3 style="margin-top:18px">الجمل الحالية</h3>
     <div id="sentencesOut"></div>
+  </div>
+
+  <!-- الوحدات -->
+  <div class="card hidden" id="secUnits">
+    <h3>إضافة وحدة جديدة</h3>
+    <p class="err" style="color:#9a9aa6">الرقم بيتحدد لوحده (4، 5، ...). استخدم نفس الرقم في الجمل والكلمات عشان تتربط بالوحدة.</p>
+    <input id="uTitle" placeholder="Title, e.g. Unit 4: Food and Drinks">
+    <input id="uSub" placeholder="Short description">
+    <textarea id="uGrammar" placeholder="Grammar explanation. One paragraph per line."></textarea>
+    <textarea id="uExercises" placeholder="Exercises, one per line:
+fill | She ___ (eat) rice. | eats
+choose | I ___ tea every day. | drink ; drinks | drink"></textarea>
+    <textarea id="uSpeaking" placeholder="Speaking, one per line:
+Talk about food | I like pizza ; I eat fish | Use I like..."></textarea>
+    <button id="addUnit">أضف الوحدة</button>
+    <div class="err" id="unitErr"></div>
+    <h3 style="margin-top:18px">الوحدات الجديدة</h3>
+    <div id="unitsOut"></div>
   </div>
 
   <!-- الكلمات -->
@@ -80,6 +104,11 @@
       <option value="1">Unit 1</option>
       <option value="2">Unit 2</option>
       <option value="3">Unit 3</option>
+      <option value="4">Unit 4</option>
+      <option value="5">Unit 5</option>
+      <option value="6">Unit 6</option>
+      <option value="7">Unit 7</option>
+      <option value="8">Unit 8</option>
     </select>
     <input id="wEn" class="en" placeholder="English word, e.g. walk the dog">
     <input id="wGroup" placeholder="Group name, e.g. Chores">
@@ -142,6 +171,7 @@
       const data = await res.json();
       if (!res.ok) throw new Error("الإيميل أو كلمة السر غلط");
       token = data.access_token;
+      localStorage.setItem("sye_admin_rt", data.refresh_token);
       document.getElementById("loginBox").classList.add("hidden");
       document.getElementById("app").classList.remove("hidden");
       loadProgress();
@@ -152,11 +182,12 @@
 
   function logout() {
     token = null;
+    localStorage.removeItem("sye_admin_rt");
     location.reload();
   }
 
   // ===== التبويبات =====
-  const sections = { progress: "secProgress", sentences: "secSentences", messages: "secMessages", words: "secWords" };
+  const sections = { progress: "secProgress", sentences: "secSentences", messages: "secMessages", words: "secWords", units: "secUnits" };
   function show(name) {
     for (const k in sections) {
       document.getElementById(sections[k]).classList.toggle("hidden", k !== name);
@@ -165,6 +196,7 @@
     if (name === "sentences") loadSentences();
     if (name === "messages") loadMessages();
     if (name === "words") loadWords();
+    if (name === "units") loadUnits();
   }
 
   // ===== تقدم الطلاب =====
@@ -279,6 +311,61 @@
     }
   };
 
+  // ===== الوحدات =====
+  async function loadUnits() {
+    const out = document.getElementById("unitsOut");
+    out.textContent = "جاري التحميل...";
+    try {
+      const rows = await api("units?select=*&order=unit_no.asc");
+      if (!rows.length) { out.textContent = "مفيش وحدات جديدة لسه"; return; }
+      out.innerHTML = `
+        <table>
+          <tr><th>الرقم</th><th>العنوان</th><th></th></tr>
+          ${rows.map(r => `<tr>
+            <td>${r.unit_no}</td>
+            <td class="en">${escapeHtml(r.title)}</td>
+            <td><button class="danger" data-udel="${r.id}">حذف</button></td>
+          </tr>`).join("")}
+        </table>`;
+      out.querySelectorAll("[data-udel]").forEach(b => b.onclick = async () => {
+        if (!confirm("تحذف الوحدة دي؟")) return;
+        try {
+          await api("units?id=eq." + b.dataset.udel, { method: "DELETE", headers: { Prefer: "return=minimal" } });
+          loadUnits();
+        } catch (e) { alert("مش قادر أحذف: " + e.message); }
+      });
+    } catch (e) {
+      out.textContent = "حصل خطأ: " + e.message;
+    }
+  }
+
+  document.getElementById("addUnit").onclick = async () => {
+    const err = document.getElementById("unitErr");
+    err.textContent = "";
+    const title = document.getElementById("uTitle").value.trim();
+    if (!title) { err.textContent = "اكتب عنوان الوحدة الأول"; return; }
+    try {
+      const last = await api("units?select=unit_no&order=unit_no.desc&limit=1");
+      const next = last.length ? last[0].unit_no + 1 : 4;
+      await api("units", {
+        method: "POST",
+        headers: { Prefer: "return=minimal" },
+        body: JSON.stringify({
+          unit_no: next,
+          title,
+          sub: document.getElementById("uSub").value.trim(),
+          grammar: document.getElementById("uGrammar").value,
+          exercises: document.getElementById("uExercises").value,
+          speaking: document.getElementById("uSpeaking").value
+        })
+      });
+      ["uTitle", "uSub", "uGrammar", "uExercises", "uSpeaking"].forEach(id => document.getElementById(id).value = "");
+      loadUnits();
+    } catch (e) {
+      err.textContent = "مش قادر أضيف: " + e.message;
+    }
+  };
+
   // ===== الكلمات =====
   async function loadWords() {
     const out = document.getElementById("wordsOut");
@@ -338,6 +425,29 @@
     return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   }
 
+  // دخول تلقائي على نفس الجهاز بدون كلمة سر
+  async function autoLogin() {
+    const rt = localStorage.getItem("sye_admin_rt");
+    if (!rt) return;
+    try {
+      const res = await fetch(SB_URL + "/auth/v1/token?grant_type=refresh_token", {
+        method: "POST",
+        headers: { apikey: SB_KEY, "Content-Type": "application/json" },
+        body: JSON.stringify({ refresh_token: rt })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error("expired");
+      token = data.access_token;
+      localStorage.setItem("sye_admin_rt", data.refresh_token);
+      document.getElementById("loginBox").classList.add("hidden");
+      document.getElementById("app").classList.remove("hidden");
+      loadProgress();
+    } catch (e) {
+      localStorage.removeItem("sye_admin_rt");
+    }
+  }
+  autoLogin();
+
   document.getElementById("loginBtn").onclick = login;
   document.getElementById("password").addEventListener("keydown", e => { if (e.key === "Enter") login(); });
   document.getElementById("logoutBtn").onclick = logout;
@@ -345,6 +455,7 @@
   document.getElementById("tabSentences").onclick = () => show("sentences");
   document.getElementById("tabMessages").onclick = () => show("messages");
   document.getElementById("tabWords").onclick = () => show("words");
+  document.getElementById("tabUnits").onclick = () => show("units");
 </script>
 </body>
 </html>
