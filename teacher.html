@@ -3,83 +3,348 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>متابعة الطلاب - SYE</title>
+<title>لوحة المدرسة - SYE</title>
 <style>
   body { margin: 0; background: #000; color: #e8e8ee; font-family: Tahoma, Arial, sans-serif; padding: 20px; }
   h1 { font-size: 20px; margin: 0 0 4px; }
   .sub { color: #9a9aa6; font-size: 14px; margin-bottom: 18px; }
-  .toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
-  button { padding: 9px 16px; border: none; border-radius: 8px; background: #6f8cff; color: #fff; cursor: pointer; font-family: inherit; font-size: 14px; }
-  table { width: 100%; border-collapse: collapse; background: #0f0f14; border: 1px solid #22222b; border-radius: 10px; overflow: hidden; }
-  th, td { padding: 10px 12px; border-bottom: 1px solid #22222b; text-align: right; font-size: 14px; }
-  th { background: #1c1c24; color: #9a9aa6; font-weight: normal; }
-  .bar { height: 6px; background: #1c1c24; border-radius: 4px; overflow: hidden; min-width: 120px; }
+  .card { background: #0f0f14; border: 1px solid #22222b; border-radius: 12px; padding: 18px; margin-bottom: 16px; }
+  .card h3 { margin: 0 0 12px; color: #ff8a8a; font-size: 16px; }
+  input, select, textarea { width: 100%; padding: 10px; margin-bottom: 10px; background: #16161c; color: #e8e8ee; border: 1px solid #2a2a33; border-radius: 8px; font-family: inherit; font-size: 15px; }
+  textarea { min-height: 80px; resize: vertical; }
+  button { padding: 9px 16px; border: none; border-radius: 8px; background: #6f8cff; color: #fff; cursor: pointer; font-family: inherit; font-size: 14px; margin-left: 6px; }
+  button.danger { background: #c0392b; }
+  button.ghost { background: #16161c; border: 1px solid #2a2a33; }
+  .tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { padding: 9px 10px; border-bottom: 1px solid #22222b; text-align: right; vertical-align: middle; }
+  th { color: #9a9aa6; font-weight: normal; background: #1c1c24; }
+  .ok { color: #4cc38a; } .bad { color: #ff6b6b; }
+  .bar { height: 6px; background: #1c1c24; border-radius: 4px; overflow: hidden; min-width: 100px; display: inline-block; width: 100px; vertical-align: middle; }
   .bar-fill { height: 100%; background: #6f8cff; }
-  .ok { color: #4cc38a; }
-  .bad { color: #ff6b6b; }
-  .empty { color: #9a9aa6; padding: 20px; text-align: center; }
+  .msg { padding: 10px; border: 1px solid #22222b; border-radius: 8px; margin-bottom: 8px; background: #16161c; }
+  .msg small { color: #9a9aa6; }
+  .err { color: #ff6b6b; min-height: 20px; font-size: 14px; }
+  .hidden { display: none; }
+  .en { direction: ltr; text-align: left; }
 </style>
 </head>
 <body>
-<h1>متابعة الطلاب - تمرين الإملاء</h1>
-<div class="sub">كل طالب ومكانه في الـ111 جملة، وعدد الحروف الصح والغلط</div>
-<div class="toolbar">
-  <button id="refresh">تحديث</button>
-  <span id="updated" class="sub"></span>
+<h1>لوحة المدرسة</h1>
+<div class="sub">متابعة الطلاب، الجمل، والرسائل</div>
+
+<!-- تسجيل الدخول -->
+<div class="card" id="loginBox">
+  <h3>تسجيل دخول الأدمن</h3>
+  <input id="email" type="email" placeholder="الإيميل" autocomplete="username">
+  <input id="password" type="password" placeholder="كلمة السر" autocomplete="current-password">
+  <button id="loginBtn">دخول</button>
+  <div class="err" id="loginErr"></div>
 </div>
-<div id="out"></div>
+
+<!-- المحتوى بعد الدخول -->
+<div id="app" class="hidden">
+  <div class="tabs">
+    <button id="tabProgress">تقدم الطلاب</button>
+    <button id="tabSentences" class="ghost">الجمل</button>
+    <button id="tabMessages" class="ghost">الرسائل</button>
+    <button id="tabWords" class="ghost">الكلمات</button>
+    <button id="logoutBtn" class="ghost">خروج</button>
+  </div>
+
+  <!-- التقدم -->
+  <div class="card" id="secProgress">
+    <h3>تقدم الطلاب</h3>
+    <div id="progressOut"></div>
+  </div>
+
+  <!-- الجمل -->
+  <div class="card hidden" id="secSentences">
+    <h3>إضافة جملة</h3>
+    <select id="unitSel">
+      <option value="1">الوحدة الأولى</option>
+      <option value="2">الوحدة الثانية</option>
+      <option value="3">الوحدة الثالثة</option>
+    </select>
+    <textarea id="sentenceIn" class="en" placeholder="Write the English sentence here"></textarea>
+    <button id="addSentence">أضف الجملة</button>
+    <div class="err" id="sentenceErr"></div>
+    <h3 style="margin-top:18px">الجمل الحالية</h3>
+    <div id="sentencesOut"></div>
+  </div>
+
+  <!-- الكلمات -->
+  <div class="card hidden" id="secWords">
+    <h3>إضافة كلمة</h3>
+    <select id="wUnit">
+      <option value="1">Unit 1</option>
+      <option value="2">Unit 2</option>
+      <option value="3">Unit 3</option>
+    </select>
+    <input id="wEn" class="en" placeholder="English word, e.g. walk the dog">
+    <input id="wGroup" placeholder="Group name, e.g. Chores">
+    <input id="wEmoji" placeholder="Emoji, e.g. 🦮">
+    <button id="addWord">أضف الكلمة</button>
+    <div class="err" id="wordErr"></div>
+    <h3 style="margin-top:18px">الكلمات الحالية</h3>
+    <div id="wordsOut"></div>
+  </div>
+
+  <!-- الرسائل -->
+  <div class="card hidden" id="secMessages">
+    <h3>إرسال رسالة</h3>
+    <input id="msgTo" placeholder="اسم الطالب بالظبط، أو اكتب all للكل">
+    <textarea id="msgBody" placeholder="اكتب الرسالة"></textarea>
+    <button id="sendMsg">أرسل</button>
+    <div class="err" id="msgErr"></div>
+    <h3 style="margin-top:18px">الرسايل اللي اتبعتت</h3>
+    <div id="messagesOut"></div>
+  </div>
+</div>
 
 <script>
-  // نفس الرابط والمفتاح اللي في صفحة الطالب
+  // نفس المشروع اللي في صفحة الطلاب
   const SB_URL = "https://atkmzjxgosdmfbglgger.supabase.co";
   const SB_KEY = "sb_publishable_o-JAvblX-VTm2ojH_Em-0w_BcIzF0Om";
   const TOTAL = 111;
 
-  // حماية بسيطة (مش أمان حقيقي)
-  const PASS = "sye2026";
-  if (prompt("كلمة سر المعلم") !== PASS) {
-    document.body.innerHTML = '<p class="empty">ممنوع الدخول</p>';
+  // التوكن بيتحفظ في الذاكرة بس، عشان ما يفضلش على الجهاز
+  let token = null;
+
+  async function api(path, opts = {}) {
+    const res = await fetch(SB_URL + "/rest/v1/" + path, {
+      ...opts,
+      headers: {
+        apikey: SB_KEY,
+        Authorization: "Bearer " + (token || SB_KEY),
+        "Content-Type": "application/json",
+        ...(opts.headers || {})
+      }
+    });
+    if (!res.ok) {
+      const txt = await res.text();
+      throw new Error(txt || ("HTTP " + res.status));
+    }
+    return res.status === 204 ? null : res.json();
   }
 
-  async function load() {
-    const out = document.getElementById("out");
-    out.innerHTML = '<p class="empty">جاري التحميل...</p>';
+  async function login() {
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+    const err = document.getElementById("loginErr");
+    err.textContent = "";
     try {
-      const res = await fetch(SB_URL + "/rest/v1/progress?select=*&order=name.asc", {
-        headers: { apikey: SB_KEY, Authorization: "Bearer " + SB_KEY }
+      const res = await fetch(SB_URL + "/auth/v1/token?grant_type=password", {
+        method: "POST",
+        headers: { apikey: SB_KEY, "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
       });
-      const rows = await res.json();
-      if (!rows.length) {
-        out.innerHTML = '<p class="empty">مفيش طلاب دخلوا لحد دلوقتي</p>';
-        return;
-      }
+      const data = await res.json();
+      if (!res.ok) throw new Error("الإيميل أو كلمة السر غلط");
+      token = data.access_token;
+      document.getElementById("loginBox").classList.add("hidden");
+      document.getElementById("app").classList.remove("hidden");
+      loadProgress();
+    } catch (e) {
+      err.textContent = e.message;
+    }
+  }
+
+  function logout() {
+    token = null;
+    location.reload();
+  }
+
+  // ===== التبويبات =====
+  const sections = { progress: "secProgress", sentences: "secSentences", messages: "secMessages", words: "secWords" };
+  function show(name) {
+    for (const k in sections) {
+      document.getElementById(sections[k]).classList.toggle("hidden", k !== name);
+    }
+    if (name === "progress") loadProgress();
+    if (name === "sentences") loadSentences();
+    if (name === "messages") loadMessages();
+    if (name === "words") loadWords();
+  }
+
+  // ===== تقدم الطلاب =====
+  async function loadProgress() {
+    const out = document.getElementById("progressOut");
+    out.textContent = "جاري التحميل...";
+    try {
+      const rows = await api("progress?select=*&order=name.asc");
+      if (!rows.length) { out.textContent = "مفيش طلاب دخلوا لحد دلوقتي"; return; }
       out.innerHTML = `
         <table>
-          <tr><th>الاسم</th><th>التقدم</th><th>الجمل المكتملة</th><th>صح</th><th>غلط</th><th>آخر نشاط</th></tr>
+          <tr><th>الاسم</th><th>التقدم</th><th>الجملة</th><th>صح</th><th>غلط</th><th>آخر نشاط</th></tr>
           ${rows.map(r => {
-            const stats = r.stats || {};
-            const t = Object.values(stats).reduce((a, s) => ({ c: a.c + s.c, w: a.w + s.w }), { c: 0, w: 0 });
+            const t = Object.values(r.stats || {}).reduce((a, s) => ({ c: a.c + s.c, w: a.w + s.w }), { c: 0, w: 0 });
             const pct = Math.round((r.idx / TOTAL) * 100);
             const when = r.updated_at ? new Date(r.updated_at).toLocaleString("ar-EG") : "-";
             return `<tr>
               <td>${r.name}</td>
-              <td><div class="bar"><div class="bar-fill" style="width:${pct}%"></div></div> ${pct}%</td>
+              <td><span class="bar"><span class="bar-fill" style="display:block;height:100%;width:${pct}%"></span></span> ${pct}%</td>
               <td>${r.idx} / ${TOTAL}</td>
-              <td class="ok">${t.c}</td>
-              <td class="bad">${t.w}</td>
+              <td class="ok">${t.c}</td><td class="bad">${t.w}</td>
               <td>${when}</td>
             </tr>`;
           }).join("")}
         </table>`;
-      document.getElementById("updated").textContent = "آخر تحديث: " + new Date().toLocaleTimeString("ar-EG");
     } catch (e) {
-      out.innerHTML = '<p class="empty">حصل خطأ في التحميل، اتأكد من الإعدادات</p>';
+      out.textContent = "حصل خطأ: " + e.message;
     }
   }
 
-  document.getElementById("refresh").onclick = load;
-  load();
-  setInterval(load, 30000);
+  // ===== الجمل =====
+  async function loadSentences() {
+    const out = document.getElementById("sentencesOut");
+    out.textContent = "جاري التحميل...";
+    try {
+      const rows = await api("sentences?select=*&order=unit.asc,position.asc,id.asc");
+      if (!rows.length) { out.textContent = "مفيش جمل مضافة من هنا لحد دلوقتي"; return; }
+      out.innerHTML = `
+        <table>
+          <tr><th>الوحدة</th><th>الجملة</th><th></th></tr>
+          ${rows.map(r => `<tr>
+            <td>${r.unit}</td>
+            <td class="en">${escapeHtml(r.en)}</td>
+            <td><button class="danger" data-del="${r.id}">حذف</button></td>
+          </tr>`).join("")}
+        </table>`;
+      out.querySelectorAll("[data-del]").forEach(b => b.onclick = async () => {
+        if (!confirm("تحذف الجملة دي؟")) return;
+        try {
+          await api("sentences?id=eq." + b.dataset.del, { method: "DELETE", headers: { Prefer: "return=minimal" } });
+          loadSentences();
+        } catch (e) { alert("مش قادر أحذف: " + e.message); }
+      });
+    } catch (e) {
+      out.textContent = "حصل خطأ: " + e.message;
+    }
+  }
+
+  document.getElementById("addSentence").onclick = async () => {
+    const en = document.getElementById("sentenceIn").value.trim();
+    const unit = Number(document.getElementById("unitSel").value);
+    const err = document.getElementById("sentenceErr");
+    err.textContent = "";
+    if (!en) { err.textContent = "اكتب الجملة الأول"; return; }
+    try {
+      await api("sentences", {
+        method: "POST",
+        headers: { Prefer: "return=minimal" },
+        body: JSON.stringify({ unit, en, position: Date.now() })
+      });
+      document.getElementById("sentenceIn").value = "";
+      loadSentences();
+    } catch (e) {
+      err.textContent = "مش قادر أضيف: " + e.message;
+    }
+  };
+
+  // ===== الرسائل =====
+  async function loadMessages() {
+    const out = document.getElementById("messagesOut");
+    out.textContent = "جاري التحميل...";
+    try {
+      const rows = await api("messages?select=*&order=created_at.desc&limit=50");
+      if (!rows.length) { out.textContent = "مفيش رسايل لسه"; return; }
+      out.innerHTML = rows.map(r => `
+        <div class="msg">
+          <div><b>إلى:</b> ${escapeHtml(r.to_name)}</div>
+          <div>${escapeHtml(r.body)}</div>
+          <small>${new Date(r.created_at).toLocaleString("ar-EG")}</small>
+        </div>`).join("");
+    } catch (e) {
+      out.textContent = "حصل خطأ: " + e.message;
+    }
+  }
+
+  document.getElementById("sendMsg").onclick = async () => {
+    const to = document.getElementById("msgTo").value.trim();
+    const body = document.getElementById("msgBody").value.trim();
+    const err = document.getElementById("msgErr");
+    err.textContent = "";
+    if (!to || !body) { err.textContent = "اكتب الاسم والرسالة"; return; }
+    try {
+      await api("messages", {
+        method: "POST",
+        headers: { Prefer: "return=minimal" },
+        body: JSON.stringify({ to_name: to, body })
+      });
+      document.getElementById("msgBody").value = "";
+      loadMessages();
+    } catch (e) {
+      err.textContent = "مش قادر أبعت: " + e.message;
+    }
+  };
+
+  // ===== الكلمات =====
+  async function loadWords() {
+    const out = document.getElementById("wordsOut");
+    out.textContent = "جاري التحميل...";
+    try {
+      const rows = await api("words?select=*&order=unit.asc,id.asc");
+      if (!rows.length) { out.textContent = "مفيش كلمات مضافة من هنا لحد دلوقتي"; return; }
+      out.innerHTML = `
+        <table>
+          <tr><th>الوحدة</th><th>الكلمة</th><th>المجموعة</th><th>إيموجي</th><th></th></tr>
+          ${rows.map(r => `<tr>
+            <td>${r.unit}</td>
+            <td class="en">${escapeHtml(r.en)}</td>
+            <td>${escapeHtml(r.group_name || "")}</td>
+            <td>${escapeHtml(r.emoji || "")}</td>
+            <td><button class="danger" data-wdel="${r.id}">حذف</button></td>
+          </tr>`).join("")}
+        </table>`;
+      out.querySelectorAll("[data-wdel]").forEach(b => b.onclick = async () => {
+        if (!confirm("تحذف الكلمة دي؟")) return;
+        try {
+          await api("words?id=eq." + b.dataset.wdel, { method: "DELETE", headers: { Prefer: "return=minimal" } });
+          loadWords();
+        } catch (e) { alert("مش قادر أحذف: " + e.message); }
+      });
+    } catch (e) {
+      out.textContent = "حصل خطأ: " + e.message;
+    }
+  }
+
+  document.getElementById("addWord").onclick = async () => {
+    const en = document.getElementById("wEn").value.trim();
+    const err = document.getElementById("wordErr");
+    err.textContent = "";
+    if (!en) { err.textContent = "اكتب الكلمة الأول"; return; }
+    try {
+      await api("words", {
+        method: "POST",
+        headers: { Prefer: "return=minimal" },
+        body: JSON.stringify({
+          unit: Number(document.getElementById("wUnit").value),
+          en,
+          group_name: document.getElementById("wGroup").value.trim() || "Extra",
+          emoji: document.getElementById("wEmoji").value.trim()
+        })
+      });
+      document.getElementById("wEn").value = "";
+      document.getElementById("wGroup").value = "";
+      document.getElementById("wEmoji").value = "";
+      loadWords();
+    } catch (e) {
+      err.textContent = "مش قادر أضيف: " + e.message;
+    }
+  };
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  }
+
+  document.getElementById("loginBtn").onclick = login;
+  document.getElementById("password").addEventListener("keydown", e => { if (e.key === "Enter") login(); });
+  document.getElementById("logoutBtn").onclick = logout;
+  document.getElementById("tabProgress").onclick = () => show("progress");
+  document.getElementById("tabSentences").onclick = () => show("sentences");
+  document.getElementById("tabMessages").onclick = () => show("messages");
+  document.getElementById("tabWords").onclick = () => show("words");
 </script>
 </body>
 </html>
