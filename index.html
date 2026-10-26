@@ -1,197 +1,172 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SYE Level 3 - Workshop</title>
 <style>
-  :root {
-    --bg: #f7f5f0;
-    --card: #ffffff;
-    --text: #222;
-    --muted: #6b6b6b;
-    --brand: #a52a2a;
-    --accent: #2c5d8f;
-    --ok: #2e8b57;
-    --bad: #c0392b;
-    --line: #e2dfd6;
-  }
+  :root { --brand: #2a0f0f; --accent: #6f8cff; --ok: #4cc38a; --bad: #ff6b6b; }
   * { box-sizing: border-box; }
-  body { margin: 0; font-family: Tahoma, Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+  body { margin: 0; font-family: Tahoma, Arial, sans-serif; background: #000; color: #e8e8ee; line-height: 1.6; }
   header { background: var(--brand); color: #fff; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
   header h1 { font-size: 20px; margin: 0; }
-  header span { font-size: 14px; opacity: .9; direction: ltr; }
-  nav.units { display: flex; gap: 8px; padding: 14px 20px; background: #fff; border-bottom: 1px solid var(--line); flex-wrap: wrap; position: sticky; top: 0; z-index: 5; }
-  nav.units button, nav.tabs button { padding: 8px 14px; border: 1px solid var(--line); background: #fff; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 14px; }
-  nav.units button.active, nav.tabs button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  header span { font-size: 14px; opacity: .9; }
+  nav.units { display: flex; gap: 8px; padding: 14px 20px; background: #0b0b0e; border-bottom: 1px solid #22222b; flex-wrap: wrap; position: sticky; top: 0; z-index: 5; }
   nav.tabs { display: flex; gap: 8px; padding: 12px 20px 0; flex-wrap: wrap; }
+  nav button { padding: 8px 14px; border: 1px solid #2a2a33; background: #16161c; color: #e8e8ee; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 14px; }
+  nav button:hover { border-color: var(--accent); }
+  nav button.active { background: var(--accent); border-color: var(--accent); color: #fff; }
   main { max-width: 860px; margin: 0 auto; padding: 16px 20px 60px; }
-  .unit-title { font-size: 22px; margin: 10px 0 4px; }
-  .unit-sub { color: var(--muted); margin: 0 0 16px; }
-  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; margin-bottom: 14px; }
-  .card h3 { margin: 0 0 10px; color: var(--brand); font-size: 17px; }
+  .unit-title { font-size: 22px; margin: 10px 0 4px; color: #f2f2f5; }
+  .unit-sub, .tip { color: #9a9aa6; font-size: 14px; }
+  .unit-sub { margin: 0 0 16px; }
+  .card { background: #0f0f14; border: 1px solid #22222b; border-radius: 12px; padding: 18px 20px; margin-bottom: 14px; }
+  .card h3 { margin: 0 0 10px; color: #ff8a8a; font-size: 17px; }
+  .card p { margin: 6px 0; }
   .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 8px; }
-  .vocab-item { display: flex; justify-content: space-between; align-items: center; gap: 8px; background: #faf9f5; border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; direction: ltr; text-align: left; }
-  .vocab-item small { color: var(--muted); direction: rtl; }
+  .vocab-item { display: flex; justify-content: space-between; align-items: center; gap: 8px; background: #16161c; border: 1px solid #2a2a33; border-radius: 8px; padding: 8px 12px; }
   .speak { border: none; background: var(--accent); color: #fff; border-radius: 6px; padding: 4px 9px; cursor: pointer; font-size: 13px; font-family: inherit; }
-  table { width: 100%; border-collapse: collapse; margin: 8px 0; direction: ltr; text-align: left; font-size: 15px; }
-  th, td { border: 1px solid var(--line); padding: 7px 10px; }
-  th { background: #f3efe6; }
-  .ex { margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px dashed var(--line); }
+  table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 15px; }
+  th, td { border: 1px solid #2a2a33; padding: 7px 10px; text-align: left; }
+  th { background: #1c1c24; }
+  ul.dots { padding-left: 20px; margin: 6px 0; }
+  ul.dots li { margin-bottom: 4px; }
+  .ex { margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px dashed #2a2a33; }
   .ex:last-child { border-bottom: none; }
-  .ex .q { margin-bottom: 6px; direction: ltr; text-align: left; font-size: 16px; }
-  .choices button { margin: 3px 4px 0 0; padding: 6px 12px; border: 1px solid var(--line); background: #fff; border-radius: 6px; cursor: pointer; font-family: inherit; font-size: 15px; direction: ltr; }
-  .choices button.picked { background: var(--accent); color: #fff; border-color: var(--accent); }
-  .fill-input { padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 15px; font-family: inherit; direction: ltr; width: 200px; }
-  .fb { margin-top: 4px; font-size: 14px; min-height: 18px; direction: ltr; text-align: left; }
+  .ex .q { margin-bottom: 6px; font-size: 16px; }
+  .choices button { margin: 3px 4px 0 0; padding: 6px 12px; border: 1px solid #2a2a33; background: #16161c; color: #e8e8ee; border-radius: 6px; cursor: pointer; font-family: inherit; font-size: 15px; }
+  .choices button:hover { border-color: var(--accent); }
+  .choices button.picked { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .fill-input { padding: 6px 10px; background: #16161c; color: #e8e8ee; border: 1px solid #2a2a33; border-radius: 6px; font-size: 15px; font-family: inherit; width: 220px; }
+  .fb { margin-top: 4px; font-size: 14px; min-height: 18px; }
   .fb.ok { color: var(--ok); }
   .fb.bad { color: var(--bad); }
-  .check-btn { margin-top: 8px; padding: 9px 18px; border: none; border-radius: 8px; background: var(--brand); color: #fff; cursor: pointer; font-family: inherit; font-size: 15px; }
+  .check-btn { margin-top: 8px; padding: 9px 18px; border: none; border-radius: 8px; background: var(--accent); color: #fff; cursor: pointer; font-family: inherit; font-size: 15px; }
   .score { margin-top: 10px; font-weight: bold; }
-  .speak-card { background: #fff; border-right: 5px solid var(--accent); }
-  .speak-card p { margin: 6px 0; direction: ltr; text-align: left; }
-  .tip { color: var(--muted); font-size: 14px; }
-  ul.dots { padding-right: 20px; margin: 6px 0; }
-  ul.dots li { margin-bottom: 4px; }
-  .dict-sentence { direction: ltr; text-align: left; font-size: 30px; line-height: 1.7; font-weight: 600; min-height: 70px; word-wrap: break-word; margin: 10px 0 16px; }
-  .dict-sentence .ok { color: var(--text); }
-  .dict-sentence .next { color: var(--accent); text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 6px; }
-  .dict-sentence .todo { color: #bbb; }
+  .speak-card { border-right: 5px solid var(--accent); }
+  .speak-card p { font-size: 16px; }
+
+  /* Dictation panel */
+  .dict-dark { position: relative; background: #000; color: #f2f2f5; border-radius: 16px; padding: 22px 24px 26px; }
+  .d-top { display: flex; justify-content: flex-end; color: #9a9aa6; font-size: 14px; margin-bottom: 8px; }
+  .d-bar { height: 4px; background: #1c1c24; border-radius: 4px; overflow: hidden; margin-bottom: 22px; }
+  .d-bar-fill { height: 100%; background: var(--accent); transition: width 0.3s; }
+  .d-controls, .d-nav { display: flex; justify-content: center; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .d-pill { background: #14141a; border: 1px solid #2a2a33; color: #f2f2f5; border-radius: 999px; padding: 8px 16px; cursor: pointer; font-family: inherit; font-size: 14px; }
+  .d-pill:hover { border-color: var(--accent); }
+  .d-pill:disabled { opacity: 0.4; cursor: default; }
+  .d-stats { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; color: #9a9aa6; font-size: 14px; margin-bottom: 16px; }
+  .d-line { width: 56px; height: 1px; background: #2a2a33; margin-bottom: 18px; }
+  .dict-sentence { font-size: 30px; line-height: 1.6; font-weight: 600; min-height: 140px; word-wrap: break-word; cursor: text; color: #f2f2f5; }
+  .dict-sentence .ok { color: #f2f2f5; }
+  .dict-sentence .next { color: var(--accent); text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 8px; }
+  .dict-sentence .todo { color: #3a3a44; }
   .dict-sentence .bad { color: var(--bad) !important; }
-  .dict-sentence.hidden .dash { display: inline-block; width: 0.5em; height: 3px; margin: 0 0.05em; vertical-align: middle; border-radius: 2px; background: #bbb; }
+  .dict-sentence.hidden .dash { display: inline-block; width: 0.5em; height: 3px; margin: 0 0.05em; vertical-align: middle; border-radius: 2px; background: #3a3a44; }
   .dict-sentence.hidden .dash.next { background: var(--accent); }
   .dict-sentence.hidden .dash.bad { background: var(--bad) !important; }
-  .dict-sentence.hidden .punct { color: #999; }
+  .dict-sentence.hidden .punct { color: #3a3a44; }
   .dict-sentence.hidden .gap { display: inline-block; width: 0.6em; }
-  .dict-input { width: 100%; padding: 10px; font-size: 18px; border: 1px solid var(--line); border-radius: 8px; direction: ltr; text-align: left; font-family: inherit; }
-  .dict-toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
-  .dict-toolbar button { padding: 7px 12px; border: 1px solid var(--line); background: #fff; border-radius: 8px; cursor: pointer; font-family: inherit; }
-  .dict-dark { position: relative; background: #000; color: #f2f2f5; border-radius: 16px; padding: 22px 24px 26px; }
-  .dict-dark .d-top { display: flex; justify-content: flex-end; color: #9a9aa6; font-size: 14px; direction: ltr; margin-bottom: 8px; }
-  .dict-dark .d-bar { height: 4px; background: #1c1c24; border-radius: 4px; overflow: hidden; margin-bottom: 22px; }
-  .dict-dark .d-bar-fill { height: 100%; background: #6f8cff; transition: width 0.3s; }
-  .dict-dark .d-controls { display: flex; justify-content: center; gap: 10px; margin-bottom: 26px; flex-wrap: wrap; }
-  .dict-dark .d-pill { background: #14141a; border: 1px solid #2a2a33; color: #f2f2f5; border-radius: 999px; padding: 8px 16px; cursor: pointer; font-family: inherit; font-size: 14px; }
-  .dict-dark .d-pill:hover { border-color: #6f8cff; }
-  .dict-dark .d-line { width: 56px; height: 1px; background: #2a2a33; margin-bottom: 18px; }
-  .dict-dark .dict-sentence { direction: ltr; text-align: left; font-size: 40px; line-height: 1.6; font-weight: 600; min-height: 110px; word-wrap: break-word; cursor: text; color: #f2f2f5; }
-  .dict-dark .dict-sentence .ok { color: #f2f2f5; }
-  .dict-dark .dict-sentence .next { color: #6f8cff; text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 8px; }
-  .dict-dark .dict-sentence .todo { color: #3a3a44; }
-  .dict-dark .dict-sentence .bad { color: #ff6b6b !important; }
-  .dict-dark .dict-sentence.hidden .dash { display: inline-block; width: 0.5em; height: 3px; margin: 0 0.05em; vertical-align: middle; border-radius: 2px; background: #3a3a44; }
-  .dict-dark .dict-sentence.hidden .dash.next { background: #6f8cff; }
-  .dict-dark .dict-sentence.hidden .dash.bad { background: #ff6b6b !important; }
-  .dict-dark .dict-sentence.hidden .punct { color: #3a3a44; }
-  .dict-dark .dict-sentence.hidden .gap { display: inline-block; width: 0.6em; }
-  .dict-dark #dictTyper { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; border: none; padding: 0; }
-  .dict-dark .fb { min-height: 22px; margin-top: 12px; direction: ltr; text-align: left; font-size: 16px; color: #4cc38a; }
-  .dict-dark .fb.bad { color: #ff6b6b; }
+  #dictTyper { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; border: none; padding: 0; }
+  .dict-dark .fb { min-height: 22px; margin-top: 12px; font-size: 16px; color: var(--ok); }
+  .dict-dark .fb.bad { color: var(--bad); }
   .dict-dark .d-hint { color: #9a9aa6; font-size: 13px; margin-top: 18px; }
-  .dict-dark .check-btn { background: #6f8cff; }
-
-  /* ===== الوضع الداكن للموقع كله ===== */
-  body { background: #000; color: #e8e8ee; }
-  header { background: #2a0f0f; }
-  nav.units { background: #0b0b0e; border-bottom-color: #22222b; }
-  nav.units button, nav.tabs button { background: #16161c; color: #e8e8ee; border-color: #2a2a33; }
-  nav.units button:hover, nav.tabs button:hover { border-color: #6f8cff; }
-  nav.units button.active, nav.tabs button.active { background: #6f8cff; border-color: #6f8cff; color: #fff; }
-  .unit-title { color: #f2f2f5; }
-  .unit-sub, .tip { color: #9a9aa6; }
-  .card { background: #0f0f14; border-color: #22222b; }
-  .card h3 { color: #ff8a8a; }
-  .vocab-item { background: #16161c; border-color: #2a2a33; color: #e8e8ee; }
-  .vocab-item small { color: #9a9aa6; }
-  table, th, td { border-color: #2a2a33; color: #e8e8ee; }
-  th { background: #1c1c24; }
-  .ex { border-bottom-color: #2a2a33; }
-  .choices button { background: #16161c; color: #e8e8ee; border-color: #2a2a33; }
-  .choices button:hover { border-color: #6f8cff; }
-  .choices button.picked { background: #6f8cff; border-color: #6f8cff; color: #fff; }
-  .fill-input { background: #16161c; color: #e8e8ee; border-color: #2a2a33; }
-  .speak-card { background: #0f0f14; border-right-color: #6f8cff; }
-  .speak-card p { color: #e8e8ee; }
-  .check-btn { background: #6f8cff; }
-  .score { color: #e8e8ee; }
-  .fb.ok { color: #4cc38a; }
-  .fb.bad { color: #ff6b6b; }
-  .speak { background: #6f8cff; }
-  .dict-dark .dict-sentence { font-size: 30px; min-height: 140px; }
-  .dict-dark .d-nav { display: flex; justify-content: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
-  .dict-dark .d-pill:disabled { opacity: 0.4; cursor: default; }
-  .dict-dark .d-stats { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; color: #9a9aa6; font-size: 14px; direction: ltr; margin-bottom: 16px; }
+  .done { text-align: center; padding: 40px 0; }
+  .name-input { width: 100%; padding: 10px; background: #16161c; color: #e8e8ee; border: 1px solid #2a2a33; border-radius: 8px; font-size: 16px; margin-bottom: 10px; font-family: inherit; }
 </style>
 </head>
 <body>
 <header>
-  <h1>ورشة المستوى الثالث - SYE English Community</h1>
-  <span>Level 3 Workshop</span>
+  <h1>SYE Level 3 Workshop</h1>
+  <span>English Community</span>
 </header>
 
 <nav class="units" id="unitNav"></nav>
 <nav class="tabs" id="tabNav"></nav>
 <main id="main"></main>
+<input id="dictTyper" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="display:none">
 
 <script>
-  // ===== المحتوى =====
+  // ===== Supabase (same project as the teacher and admin pages) =====
+  const SB_URL = "https://atkmzjxgosdmfbglgger.supabase.co";
+  const SB_KEY = "sb_publishable_o-JAvblX-VTm2ojH_Em-0w_BcIzF0Om";
+
+  // ===== Emoji for each word =====
+  const EMOJI = {
+    "Wake up early": "⏰", "Do homework": "📚", "Do sports": "⚽", "Brush your teeth": "🪥",
+    "Drink water": "💧", "Go to the gym": "🏋️",
+    "Wake up late": "😴", "Watch TV a lot": "📺", "Smoke": "🚬", "Bite your nails": "💅",
+    "Drink a lot of coffee": "☕", "Eat lots of sugar": "🍬",
+    "in the morning": "🌅", "in the afternoon": "🌤️", "in the evening": "🌇", "at night": "🌙",
+    "every day": "📅", "every week": "🗓️", "at the weekend": "🎉",
+    "clean the bathroom": "🧼", "cook dinner / lunch": "🍳", "feed the dog": "🐶", "walk the dog": "🦮",
+    "make the bed(s)": "🛏️", "wash the dishes": "🍽️", "do the washing / do the laundry": "🧺",
+    "go to the supermarket": "🛒", "clean the bedroom": "🧹", "do jobs around the house": "🏠",
+    "get up / got up": "⏰", "break / broke": "💔", "take / took": "🚌", "buy / bought": "🛍️",
+    "meet / met": "🤝", "lose / lost": "🔍", "feel / felt": "😊", "speak / spoke": "🗣️",
+    "have / had": "🙋", "go / went": "🚶", "run / ran": "🏃", "eat / ate": "🥗",
+    "forget / forgot": "🤔", "see / saw": "👀", "visit / visited": "🏡", "watch / watched": "🎬",
+    "play / played": "🎮", "study / studied": "📖"
+  };
+
+  // ===== Units =====
   const UNITS = [
     {
-      title: "الوحدة الأولى: العادات والمضارع البسيط",
-      sub: "Habits, present simple (positive & negative), why / because",
+      title: "Unit 1: Habits and Present Simple",
+      sub: "Good and bad habits, present simple (positive and negative), why and because",
       vocab: [
-        { en: "Wake up early", ar: "يصحى بدري", group: "Good habit" },
-        { en: "Do homework", ar: "يذاكر / يعمل الواجب", group: "Good habit" },
-        { en: "Do sports", ar: "يمارس رياضة", group: "Good habit" },
-        { en: "Brush your teeth", ar: "ينضف أسنانه", group: "Good habit" },
-        { en: "Drink water", ar: "يشرب مية", group: "Good habit" },
-        { en: "Go to the gym", ar: "يروح الجيم", group: "Good habit" },
-        { en: "Wake up late", ar: "يصحى متأخر", group: "Bad habit" },
-        { en: "Watch TV a lot", ar: "يتفرج على التلفزيون كتير", group: "Bad habit" },
-        { en: "Smoke", ar: "يدخن", group: "Bad habit" },
-        { en: "Bite your nails", ar: "يعض أظافره", group: "Bad habit" },
-        { en: "Drink a lot of coffee", ar: "يشرب قهوة كتير", group: "Bad habit" },
-        { en: "Eat lots of sugar", ar: "ياكل سكر كتير", group: "Bad habit" },
-        { en: "in the morning", ar: "في الصبح", group: "Time" },
-        { en: "in the afternoon", ar: "بعد الظهر", group: "Time" },
-        { en: "in the evening", ar: "بالليل (المساء)", group: "Time" },
-        { en: "at night", ar: "بالليل (متأخر)", group: "Time" },
-        { en: "every day", ar: "كل يوم", group: "Time" },
-        { en: "every week", ar: "كل أسبوع", group: "Time" },
-        { en: "at the weekend", ar: "في الويك إند", group: "Time" }
+        { en: "Wake up early", group: "Good habits" },
+        { en: "Do homework", group: "Good habits" },
+        { en: "Do sports", group: "Good habits" },
+        { en: "Brush your teeth", group: "Good habits" },
+        { en: "Drink water", group: "Good habits" },
+        { en: "Go to the gym", group: "Good habits" },
+        { en: "Wake up late", group: "Bad habits" },
+        { en: "Watch TV a lot", group: "Bad habits" },
+        { en: "Smoke", group: "Bad habits" },
+        { en: "Bite your nails", group: "Bad habits" },
+        { en: "Drink a lot of coffee", group: "Bad habits" },
+        { en: "Eat lots of sugar", group: "Bad habits" },
+        { en: "in the morning", group: "Time words" },
+        { en: "in the afternoon", group: "Time words" },
+        { en: "in the evening", group: "Time words" },
+        { en: "at night", group: "Time words" },
+        { en: "every day", group: "Time words" },
+        { en: "every week", group: "Time words" },
+        { en: "at the weekend", group: "Time words" }
       ],
       grammar: `
         <div class="card">
-          <h3>المضارع البسيط (Present Simple) - الإيجاب</h3>
-          <p>بنستخدمه للعادات والحاجات اللي بتتكرر. الشكل:</p>
+          <h3>Present simple: positive</h3>
+          <p>We use it for habits and things we do again and again.</p>
           <table>
-            <tr><th>Subject</th><th>Verb</th><th>Complement</th></tr>
-            <tr><td>I / we / you / they</td><td>play (base form)</td><td>football every day.</td></tr>
-            <tr><td>he / she / it</td><td>plays (+ s / es / ies)</td><td>football every day.</td></tr>
+            <tr><th>Subject</th><th>Verb</th><th>Example</th></tr>
+            <tr><td>I / we / you / they</td><td>play (base form)</td><td>I play football every day.</td></tr>
+            <tr><td>he / she / it</td><td>plays (add s, es, or ies)</td><td>She plays tennis on Sundays.</td></tr>
           </table>
-          <h3>الإضافات مع he / she / it</h3>
+          <h3>Spelling with he / she / it</h3>
           <ul class="dots">
-            <li>أغلب الأفعال: + s ➜ work → works</li>
-            <li>تنتهي بـ s, sh, ch, x: + es ➜ watch → watches, fix → fixes, teach → teaches</li>
-            <li>تنتهي بـ consonant + y: غيّر y إلى ies ➜ study → studies, try → tries</li>
-            <li>تنتهي بـ vowel + y: زوّد s عادي ➜ enjoy → enjoys, stay → stays</li>
-            <li>الفعل have ➜ has</li>
+            <li>Most verbs: add s. work → works</li>
+            <li>Ends in s, sh, ch, x: add es. watch → watches, fix → fixes</li>
+            <li>Ends in consonant + y: change y to ies. study → studies</li>
+            <li>Ends in vowel + y: just add s. enjoy → enjoys</li>
+            <li>have → has</li>
           </ul>
         </div>
         <div class="card">
-          <h3>المضارع البسيط - النفي</h3>
+          <h3>Present simple: negative</h3>
           <table>
-            <tr><th>Subject</th><th>do / does + not</th><th>verb (base form)</th></tr>
-            <tr><td>I / we / you / they</td><td>don't</td><td>play</td></tr>
-            <tr><td>he / she / it</td><td>doesn't</td><td>play (من غير s)</td></tr>
+            <tr><th>Subject</th><th>Helper</th><th>Example</th></tr>
+            <tr><td>I / we / you / they</td><td>don't + base verb</td><td>We don't smoke.</td></tr>
+            <tr><td>he / she / it</td><td>doesn't + base verb</td><td>He doesn't smoke.</td></tr>
           </table>
-          <p class="tip">مهم: بعد doesn't الفعل بيكون من غير s.</p>
+          <p class="tip">Remember: after doesn't, the verb has no s.</p>
         </div>
         <div class="card">
-          <h3>why و because</h3>
-          <p>السؤال: <b>Why do you study English?</b></p>
-          <p>الجواب: <b>Because I want to improve my speaking.</b></p>
-          <p>أو بصيغة to + verb: <b>To improve my speaking.</b></p>
+          <h3>Why and because</h3>
+          <p>Question: <b>Why do you study English?</b></p>
+          <p>Answer: <b>Because I want to improve my speaking.</b></p>
+          <p>Or: <b>To improve my speaking.</b></p>
         </div>
       `,
       exercises: [
@@ -207,40 +182,40 @@
         { type: "choose", q: "Why do you study English? ___ I want to travel.", options: ["Because", "Why"], answer: "Because" }
       ],
       speaking: [
-        { title: "تكلم عن عاداتك الجيدة والسيئة", lines: ["I wake up early. I do sports.", "I don't smoke. I drink a lot of coffee."], tip: "اختار 7 عادات جيدة و7 سيئة وتكلم عنهم" },
-        { title: "اتكلم عن عادات شخص من أهلك", lines: ["My father wakes up early.", "My sister doesn't watch TV a lot."], tip: "الأب، الأم، الأخت، الأخ" },
-        { title: "أسئلة للحوار", lines: ["Do you bite your nails?", "Do you come to class late?", "How many hours do you sleep at night?", "What are your friends' bad habits?"], tip: "اسأل زميلك واكتب إجابته" }
+        { title: "Talk about your good and bad habits", lines: ["I wake up early. I do sports.", "I don't smoke. I drink a lot of coffee."], tip: "Pick 7 good habits and 7 bad habits and talk about them." },
+        { title: "Talk about someone's habits", lines: ["My father wakes up early.", "My sister doesn't watch TV a lot."], tip: "Father, mother, sister, brother." },
+        { title: "Questions to ask a partner", lines: ["Do you bite your nails?", "Do you come to class late?", "How many hours do you sleep at night?", "What are your friends' bad habits?"], tip: "Ask your partner and write down the answers." }
       ]
     },
     {
-      title: "الوحدة الثانية: الشغل في البيت والأسئلة",
+      title: "Unit 2: Housework and Questions",
       sub: "Jobs around the house, housework, yes/no and wh- questions",
       vocab: [
-        { en: "clean the bathroom", ar: "ينضف الحمام", group: "Chores" },
-        { en: "cook dinner / lunch", ar: "يعمل العشا / الغدا", group: "Chores" },
-        { en: "feed the dog", ar: "يطعم الكلب", group: "Chores" },
-        { en: "walk the dog", ar: "يخرج بالكلب يتمشى", group: "Chores" },
-        { en: "make the bed(s)", ar: "يرتب السرير", group: "Chores" },
-        { en: "wash the dishes", ar: "يغسل الأطباق", group: "Chores" },
-        { en: "do the washing / do the laundry", ar: "يغسل الهدوم", group: "Chores" },
-        { en: "go to the supermarket", ar: "يروح السوبر ماركت", group: "Chores" },
-        { en: "clean the bedroom", ar: "ينضف الأوضة", group: "Chores" },
-        { en: "do jobs around the house", ar: "يعمل شغل البيت", group: "Chores" }
+        { en: "clean the bathroom", group: "Chores" },
+        { en: "cook dinner / lunch", group: "Chores" },
+        { en: "feed the dog", group: "Chores" },
+        { en: "walk the dog", group: "Chores" },
+        { en: "make the bed(s)", group: "Chores" },
+        { en: "wash the dishes", group: "Chores" },
+        { en: "do the washing / do the laundry", group: "Chores" },
+        { en: "go to the supermarket", group: "Chores" },
+        { en: "clean the bedroom", group: "Chores" },
+        { en: "do jobs around the house", group: "Chores" }
       ],
       grammar: `
         <div class="card">
-          <h3>أسئلة Yes / No (Present Simple)</h3>
+          <h3>Yes / no questions (present simple)</h3>
           <table>
-            <tr><th>سؤال</th><th>جواب قصير</th></tr>
+            <tr><th>Question</th><th>Short answer</th></tr>
             <tr><td>Do you clean your room?</td><td>Yes, I do. / No, I don't.</td></tr>
             <tr><td>Does your mother cook dinner?</td><td>Yes, she does. / No, she doesn't.</td></tr>
             <tr><td>Does Elena clean the kitchen?</td><td>Yes, she does.</td></tr>
           </table>
-          <p class="tip">القاعدة: Do مع I / you / we / they — و Does مع he / she / it. والفعل بعدهم يكون من غير s.</p>
+          <p class="tip">Use Do with I / you / we / they. Use Does with he / she / it. The verb after them has no s.</p>
         </div>
         <div class="card">
-          <h3>أسئلة Wh- (Present Simple)</h3>
-          <p>Wh-word + do / does + subject + verb (base form)</p>
+          <h3>Wh- questions (present simple)</h3>
+          <p>Wh-word + do / does + subject + base verb</p>
           <table>
             <tr><th>Question</th><th>Answer</th></tr>
             <tr><td>What do you do at home?</td><td>I wash the dishes.</td></tr>
@@ -248,7 +223,7 @@
             <tr><td>Where does your friend work?</td><td>At a hospital.</td></tr>
             <tr><td>How often do you clean your room?</td><td>Once a week.</td></tr>
           </table>
-          <p class="tip">كلمات السؤال: What, Where, When, Who, Why, How often.</p>
+          <p class="tip">Question words: what, where, when, who, why, how often.</p>
         </div>
       `,
       exercises: [
@@ -264,57 +239,57 @@
         { type: "fill", q: "Where ___ your brother ___ (walk) the dog? - In the park.", answer: ["does walk"] }
       ],
       speaking: [
-        { title: "ما هو الشغل اللي بتعمله في البيت؟", lines: ["What housework do you do at home?", "I wash the dishes and I clean my room."], tip: "اتكلم عن نفسك" },
-        { title: "شغل أهلك في البيت", lines: ["What housework does your mum do?", "My dad walks the dog."], tip: "mum, dad, sister, brother" },
-        { title: "Find someone who...", lines: ["Do you clean your room?  How often do you clean your room?", "Does your mother do the laundry?  When does she do the laundry?"], tip: "اسأل زملاءك واكتب المعلومات: Where / When / What / how often / why" }
+        { title: "What housework do you do?", lines: ["What housework do you do at home?", "I wash the dishes and I clean my room."], tip: "Talk about yourself." },
+        { title: "Your family's housework", lines: ["What housework does your mum do?", "My dad walks the dog."], tip: "Mum, dad, sister, brother." },
+        { title: "Find someone who...", lines: ["Do you clean your room? How often do you clean your room?", "Does your mother do the laundry? When does she do the laundry?"], tip: "Ask your classmates and write down: where, when, what, how often, why." }
       ]
     },
     {
-      title: "الوحدة الثالثة: الماضي البسيط",
-      sub: "Past simple (regular & irregular), was/were, ed sounds, past questions",
+      title: "Unit 3: Past Simple",
+      sub: "Past simple (regular and irregular), was / were, ed sounds, past questions",
       vocab: [
-        { en: "get up / got up", ar: "صحي", group: "Irregular" },
-        { en: "break / broke", ar: "كسر", group: "Irregular" },
-        { en: "take / took", ar: "أخد", group: "Irregular" },
-        { en: "buy / bought", ar: "اشترى", group: "Irregular" },
-        { en: "meet / met", ar: "قابل", group: "Irregular" },
-        { en: "lose / lost", ar: "ضيّع", group: "Irregular" },
-        { en: "feel / felt", ar: "حس", group: "Irregular" },
-        { en: "speak / spoke", ar: "اتكلم", group: "Irregular" },
-        { en: "have / had", ar: "كان عنده / أكل (قعد)", group: "Irregular" },
-        { en: "go / went", ar: "راح", group: "Irregular" },
-        { en: "run / ran", ar: "جرى", group: "Irregular" },
-        { en: "eat / ate", ar: "أكل", group: "Irregular" },
-        { en: "forget / forgot", ar: "نسي", group: "Irregular" },
-        { en: "see / saw", ar: "شاف", group: "Irregular" },
-        { en: "visit / visited", ar: "زار", group: "Regular" },
-        { en: "watch / watched", ar: "اتفرج", group: "Regular" },
-        { en: "play / played", ar: "لعب", group: "Regular" },
-        { en: "study / studied", ar: "ذاكر", group: "Regular" }
+        { en: "get up / got up", group: "Irregular verbs" },
+        { en: "break / broke", group: "Irregular verbs" },
+        { en: "take / took", group: "Irregular verbs" },
+        { en: "buy / bought", group: "Irregular verbs" },
+        { en: "meet / met", group: "Irregular verbs" },
+        { en: "lose / lost", group: "Irregular verbs" },
+        { en: "feel / felt", group: "Irregular verbs" },
+        { en: "speak / spoke", group: "Irregular verbs" },
+        { en: "have / had", group: "Irregular verbs" },
+        { en: "go / went", group: "Irregular verbs" },
+        { en: "run / ran", group: "Irregular verbs" },
+        { en: "eat / ate", group: "Irregular verbs" },
+        { en: "forget / forgot", group: "Irregular verbs" },
+        { en: "see / saw", group: "Irregular verbs" },
+        { en: "visit / visited", group: "Regular verbs" },
+        { en: "watch / watched", group: "Regular verbs" },
+        { en: "play / played", group: "Regular verbs" },
+        { en: "study / studied", group: "Regular verbs" }
       ],
       grammar: `
         <div class="card">
-          <h3>الماضي البسيط - الإيجاب</h3>
-          <p>Subject + verb (past) + complement</p>
+          <h3>Past simple: positive</h3>
+          <p>Subject + past verb + complement</p>
           <ul class="dots">
-            <li>Regular: + ed ➜ walk → walked, visit → visited</li>
-            <li>Regular تنتهي بـ e: + d ➜ live → lived</li>
-            <li>Regular تنتهي بـ consonant + y: ➜ study → studied</li>
-            <li>Irregular: لازم تحفظها (زي الجدول اللي فوق)</li>
+            <li>Regular verbs: add ed. walk → walked, visit → visited</li>
+            <li>Verbs ending in e: add d. live → lived</li>
+            <li>Verbs ending in consonant + y: change y to ied. study → studied</li>
+            <li>Irregular verbs: you must learn them (see the word list)</li>
           </ul>
-          <h3>نطق ed</h3>
+          <h3>How to say ed</h3>
           <table>
             <tr><th>/t/</th><th>/d/</th><th>/id/</th></tr>
-            <tr><td>helped, watched, washed, laughed</td><td>called, played, cleaned, loved</td><td>waited, needed (آخر حرف d أو t)</td></tr>
+            <tr><td>helped, watched, washed, laughed</td><td>called, played, cleaned, loved</td><td>waited, needed</td></tr>
           </table>
-          <p class="tip">لو آخر صوت في الكلمة "مهموس" (زي p, k, s, sh, ch) ➜ /t/. لو "مجهور" (زي l, v, m, n) ➜ /d/.</p>
+          <p class="tip">If the last sound is voiceless (p, k, s, sh, ch), say /t/. If it is voiced (l, v, m, n), say /d/. If the verb ends in d or t, say /id/.</p>
         </div>
         <div class="card">
-          <h3>الماضي البسيط - النفي والسؤال</h3>
+          <h3>Past simple: negative and questions</h3>
           <table>
             <tr><th>Type</th><th>Pattern</th><th>Example</th></tr>
-            <tr><td>Negative</td><td>Subject + didn't + verb (base)</td><td>I didn't walk late last night.</td></tr>
-            <tr><td>Question</td><td>Did + subject + verb (base)?</td><td>Did you go to the cinema?</td></tr>
+            <tr><td>Negative</td><td>Subject + didn't + base verb</td><td>I didn't walk late last night.</td></tr>
+            <tr><td>Question</td><td>Did + subject + base verb?</td><td>Did you go to the cinema?</td></tr>
             <tr><td>Short answer</td><td>Yes, I did. / No, I didn't.</td><td></td></tr>
           </table>
         </div>
@@ -341,14 +316,14 @@
         { type: "fill", q: "Was the train busy? - Yes, it ___.", answer: ["was"] }
       ],
       speaking: [
-        { title: "What did you do when you were a child?", lines: ["When I was a child, I lived in a village.", "I played football with my friends after school."], tip: "اتكلم عن: قرية/مدينة، المدرسة، المواصلات، المدرسين، الألعاب، الأصحاب" },
-        { title: "Talk about a bad day", lines: ["When: Yesterday / Last Friday", "Where: At work / At the cinema", "What: I lost my phone and I forgot a meeting."], tip: "املا الجدول: When? / Where? / What?" },
-        { title: "Someone's childhood", lines: ["She lived in a big town.", "She travelled to school by bus.", "She didn't like tennis."], tip: "استخدم الماضي البسيط في كل جملة" }
+        { title: "What did you do when you were a child?", lines: ["When I was a child, I lived in a village.", "I played football with my friends after school."], tip: "Talk about: your home town, your school, how you travelled, your teachers, your games, your friends." },
+        { title: "Talk about a bad day", lines: ["When: Yesterday / Last Friday", "Where: At work / At the cinema", "What: I lost my phone and I forgot a meeting."], tip: "Fill in the table: When? Where? What?" },
+        { title: "Someone's childhood", lines: ["She lived in a big town.", "She travelled to school by bus.", "She didn't like tennis."], tip: "Use the past simple in every sentence." }
       ]
     }
   ];
 
-  // ===== جمل الإملاء لكل وحدة =====
+  // ===== Dictation sentences (all units together, in order) =====
   const DICTATION = [
     [
       "I wake up early every morning because I want to do my homework before school.",
@@ -469,19 +444,64 @@
     ]
   ];
 
-  // ===== الحالة =====
-  const ALL_DICT = DICTATION.flat();
+  let ALL_DICT = DICTATION.flat();
+  let myMessages = [];
 
-  // ===== حفظ التقدم والعدادات في المتصفح =====
-  const DICT_KEY = "sye_dict_progress_v1";
+  // ===== State =====
+  let unitIndex = 0;
+  let tabName = "words";
+  const TABS = [
+    { id: "words", label: "Words" },
+    { id: "grammar", label: "Grammar" },
+    { id: "exercises", label: "Exercises" },
+    { id: "speaking", label: "Speaking" },
+    { id: "dictation", label: "Dictation" }
+  ];
+
+  let dictIdx = 0;
+  let dictVisible = true;
+  let dPos = 0;
+  let dFlash = -1;
+  let dFlashTimer = null;
+  let dLocked = false;
+  let dKey = null;
   let dictStats = {};
-  // ===== قاعدة البيانات (Supabase) =====
-  // حط الرابط والمفتاح بتوعك هنا
-  const SB_URL = "https://atkmzjxgosdmfbglgger.supabase.co";
-  const SB_KEY = "sb_publishable_o-JAvblX-VTm2ojH_Em-0w_BcIzF0Om";
-
   let studentName = localStorage.getItem("sye_name") || "";
 
+  // ===== Voice =====
+  let cachedVoice = null;
+  function getVoice() {
+    if (cachedVoice) return cachedVoice;
+    const en = speechSynthesis.getVoices().filter(v => /^en/i.test(v.lang));
+    const prefs = [/natural/i, /google us english/i, /aria|jenny|guy|ava|emma|michelle|andrew/i, /samantha|zira|david/i];
+    for (const p of prefs) {
+      const found = en.find(v => p.test(v.name));
+      if (found) { cachedVoice = found; return found; }
+    }
+    cachedVoice = en[0] || null;
+    return cachedVoice;
+  }
+  if ("speechSynthesis" in window) {
+    speechSynthesis.onvoiceschanged = () => { cachedVoice = null; };
+  }
+
+  function cleanForSpeech(t) {
+    return t.replace(/\(s\)/g, "s").replace(/\//g, " or ").replace(/[()]/g, "").replace(/\s+/g, " ").trim();
+  }
+
+  function speak(text) {
+    if (!("speechSynthesis" in window)) return;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(cleanForSpeech(text));
+    const voice = getVoice();
+    if (voice) u.voice = voice;
+    u.lang = voice ? voice.lang : "en-US";
+    u.rate = 0.85;
+    u.pitch = 1;
+    speechSynthesis.speak(u);
+  }
+
+  // ===== Supabase =====
   async function sbFetch(path, opts = {}) {
     try {
       const res = await fetch(SB_URL + "/rest/v1/" + path, {
@@ -498,6 +518,29 @@
     } catch (e) {
       return null;
     }
+  }
+
+  // Extra sentences and words added by the admin
+  async function loadExtras() {
+    const [sents, words] = await Promise.all([
+      sbFetch("sentences?select=*&order=position.asc,id.asc"),
+      sbFetch("words?select=*&order=id.asc")
+    ]);
+    if (sents && sents.length) ALL_DICT = DICTATION.flat().concat(sents.map(r => r.en));
+    if (words) {
+      words.forEach(w => {
+        const idx = Math.min(Math.max(0, (w.unit || 1) - 1), UNITS.length - 1);
+        UNITS[idx].vocab.push({ en: w.en, group: w.group_name || "Extra" });
+        if (w.emoji) EMOJI[w.en] = w.emoji;
+      });
+    }
+  }
+
+  // Messages sent by the admin to this student or to everyone
+  async function loadMessages() {
+    if (!studentName) return;
+    const rows = await sbFetch("messages?select=*&or=(to_name.eq." + encodeURIComponent(studentName) + ",to_name.eq.all)&order=created_at.desc&limit=20");
+    myMessages = rows || [];
   }
 
   async function loadDict() {
@@ -517,35 +560,11 @@
       sbFetch("progress?on_conflict=name", {
         method: "POST",
         headers: { Prefer: "resolution=merge-duplicates" },
-        body: JSON.stringify({
-          name: studentName,
-          idx: dictIdx,
-          stats: dictStats,
-          updated_at: new Date().toISOString()
-        })
+        body: JSON.stringify({ name: studentName, idx: dictIdx, stats: dictStats, updated_at: new Date().toISOString() })
       });
     }, 300);
   }
 
-  // أول مرة الطالب يدخل بيكتب اسمه
-  function renderNameScreen() {
-    document.getElementById("main").innerHTML =
-      '<div class="card">' +
-        '<h3>اكتب اسمك عشان تبدأ</h3>' +
-        '<p class="tip">الاسم هيتحفظ وتقدمك هيتابع من عليه.</p>' +
-        '<input id="nameIn" class="fill-input" style="width:100%" placeholder="الاسم بالكامل">' +
-        '<div><button class="check-btn" id="nameGo">ابدأ</button></div>' +
-      '</div>';
-    document.getElementById("nameGo").onclick = async () => {
-      const v = document.getElementById("nameIn").value.trim();
-      if (!v) return;
-      studentName = v;
-      localStorage.setItem("sye_name", v);
-      await loadDict();
-      tabName = "dictation";
-      renderAll();
-    };
-  }
   function statOf(i) {
     if (!dictStats[i]) dictStats[i] = { c: 0, w: 0 };
     return dictStats[i];
@@ -553,19 +572,105 @@
   function totals() {
     return Object.values(dictStats).reduce((a, s) => ({ c: a.c + s.c, w: a.w + s.w }), { c: 0, w: 0 });
   }
-  let dictIdx = 0;
-  let dictVisible = true;
-  let dPos = 0;
-  let dFlash = -1;
-  let dFlashTimer = null;
-  let dLocked = false;
-  let dKey = null;
 
-  // تنظيف النص قبل النطق: "/" تتقري "أو"، والأقواس تتشال
-  function cleanForSpeech(t) {
-    return t.replace(/\(s\)/g, "s").replace(/\//g, " or ").replace(/[()]/g, "").replace(/\s+/g, " ").trim();
+  // ===== Navigation =====
+  function renderNav() {
+    document.getElementById("unitNav").innerHTML = UNITS.map((u, i) =>
+      `<button class="${i === unitIndex ? "active" : ""}" data-u="${i}">Unit ${i + 1}</button>`
+    ).join("");
+    document.querySelectorAll("#unitNav button").forEach(b => b.onclick = () => {
+      unitIndex = Number(b.dataset.u);
+      renderAll();
+    });
+    document.getElementById("tabNav").innerHTML = TABS.map(t =>
+      `<button class="${t.id === tabName ? "active" : ""}" data-t="${t.id}">${t.label}</button>`
+    ).join("");
+    document.querySelectorAll("#tabNav button").forEach(b => b.onclick = () => {
+      tabName = b.dataset.t;
+      renderAll();
+    });
   }
 
+  // ===== Words =====
+  function renderWords(u) {
+    const groups = [...new Set(u.vocab.map(v => v.group))];
+    return groups.map(g => `
+      <div class="card">
+        <h3>${g}</h3>
+        <div class="vocab-grid">
+          ${u.vocab.filter(v => v.group === g).map(v => `
+            <div class="vocab-item">
+              <button class="speak" data-say="${v.en}">🔊</button>
+              <span>${EMOJI[v.en] ? EMOJI[v.en] + " " : ""}${v.en}</span>
+            </div>`).join("")}
+        </div>
+      </div>`).join("");
+  }
+
+  // ===== Exercises =====
+  function renderExercises(u) {
+    return `
+      <div class="card" id="exCard">
+        ${u.exercises.map((ex, i) => {
+          if (ex.type === "choose") {
+            return `<div class="ex" data-i="${i}">
+              <div class="q">${i + 1}. ${ex.q}</div>
+              <div class="choices">${ex.options.map(o => `<button data-v="${o}">${o}</button>`).join("")}</div>
+              <div class="fb"></div>
+            </div>`;
+          }
+          return `<div class="ex" data-i="${i}">
+            <div class="q">${i + 1}. ${ex.q}</div>
+            <input class="fill-input" type="text" autocomplete="off" spellcheck="false">
+            <div class="fb"></div>
+          </div>`;
+        }).join("")}
+        <button class="check-btn" id="checkBtn">Check answers</button>
+        <div class="score" id="scoreBox"></div>
+      </div>`;
+  }
+
+  function wireExercises(u) {
+    const picked = {};
+    document.querySelectorAll("#exCard .ex").forEach(box => {
+      const i = Number(box.dataset.i);
+      if (u.exercises[i].type === "choose") {
+        box.querySelectorAll(".choices button").forEach(b => b.onclick = () => {
+          box.querySelectorAll(".choices button").forEach(x => x.classList.remove("picked"));
+          b.classList.add("picked");
+          picked[i] = b.dataset.v;
+        });
+      }
+    });
+    document.getElementById("checkBtn").onclick = () => {
+      let correct = 0;
+      document.querySelectorAll("#exCard .ex").forEach(box => {
+        const i = Number(box.dataset.i);
+        const ex = u.exercises[i];
+        const fb = box.querySelector(".fb");
+        const val = ex.type === "choose" ? picked[i] : box.querySelector("input").value.trim();
+        if (!val) { fb.className = "fb"; fb.textContent = ""; return; }
+        const answers = ex.type === "choose" ? [ex.answer] : ex.answer;
+        const ok = answers.map(a => a.toLowerCase()).includes(val.toLowerCase());
+        if (ok) correct++;
+        fb.className = "fb " + (ok ? "ok" : "bad");
+        fb.textContent = ok ? "✓ Correct" : "✗ Answer: " + (ex.type === "choose" ? ex.answer : ex.answer[0]);
+      });
+      document.getElementById("scoreBox").textContent = "Score: " + correct + " out of " + u.exercises.length;
+    };
+  }
+
+  // ===== Speaking =====
+  function renderSpeaking(u) {
+    return u.speaking.map(s => `
+      <div class="card speak-card">
+        <h3>${s.title}</h3>
+        ${s.lines.map(l => `<p>${l}</p>`).join("")}
+        <p class="tip">${s.tip}</p>
+      </div>`).join("");
+  }
+
+  // ===== Dictation =====
   function dTarget() { return ALL_DICT[dictIdx]; }
   function isPunctD(ch) { return !/[A-Za-z ]/.test(ch); }
   function skipPunctD(p) {
@@ -587,6 +692,17 @@
     let p = dPos - 1;
     while (p > 0 && isPunctD(t[p])) p--;
     dPos = Math.max(0, p);
+  }
+
+  // Speak only the word at the cursor
+  function speakWordAt(p) {
+    const t = dTarget();
+    let s = p;
+    while (s > 0 && t[s - 1] !== " ") s--;
+    let e = p;
+    while (e < t.length && t[e] !== " ") e++;
+    const word = t.slice(s, e).replace(/[^A-Za-z']/g, "");
+    if (word) speak(word);
   }
 
   function renderDictSentence() {
@@ -623,46 +739,51 @@
   }
 
   function renderDictationShell() {
-    const list = ALL_DICT;
+    const total = ALL_DICT.length;
+    if (dictIdx >= total) {
+      return '<div class="card done"><h3>You finished the dictation ✓</h3>' +
+        '<p class="tip">Total: ✓ ' + totals().c + ' | ✗ ' + totals().w + '</p>' +
+        '<button class="check-btn" id="dictRestart">Start again</button></div>';
+    }
     const st = statOf(dictIdx);
     const tot = totals();
-    if (dictIdx >= list.length) {
-      return '<div class="card"><h3>خلّصت تمرين الإملاء ✓</h3><button class="check-btn" id="dictRestart">ابدأ من جديد</button></div>';
-    }
     return '<div class="dict-dark">' +
-      '<div class="d-top"><span>' + (dictIdx + 1) + ' / ' + list.length + '</span></div>' +
-      '<div class="d-bar"><div class="d-bar-fill" style="width:' + (dictIdx / list.length * 100) + '%"></div></div>' +
+      '<div class="d-top"><span>Sentence ' + (dictIdx + 1) + ' of ' + total + '</span></div>' +
+      '<div class="d-bar"><div class="d-bar-fill" style="width:' + (dictIdx / total * 100) + '%"></div></div>' +
       '<div class="d-controls">' +
-        '<button class="d-pill" id="dictToggle">' + (dictVisible ? "النص ظاهر" : "النص مخفي") + '</button>' +
-        '<button class="d-pill" id="dictReplay">🎧 أعد الاستماع (Shift)</button>' +
+        '<button class="d-pill" id="dictToggle">' + (dictVisible ? "Hide text" : "Show text") + '</button>' +
+        '<button class="d-pill" id="dictReplay">🎧 Listen again (Shift)</button>' +
       '</div>' +
       '<div class="d-nav">' +
-        '<button class="d-pill" id="dictPrev"' + (dictIdx === 0 ? ' disabled' : '') + '>← السابقة</button>' +
-        '<button class="d-pill" id="dictRedo">↻ أعد كتابة الجملة</button>' +
-        '<button class="d-pill" id="dictSkip">التالية →</button>' +
+        '<button class="d-pill" id="dictPrev"' + (dictIdx === 0 ? ' disabled' : '') + '>← Previous</button>' +
+        '<button class="d-pill" id="dictRedo">↻ Retype sentence</button>' +
+        '<button class="d-pill" id="dictSkip">Next →</button>' +
       '</div>' +
       '<div class="d-stats">' +
-        '<span>الجملة: ✓ ' + st.c + ' | ✗ ' + st.w + '</span>' +
-        '<span>المجموع: ✓ ' + tot.c + ' | ✗ ' + tot.w + '</span>' +
+        '<span>This sentence: ✓ ' + st.c + ' | ✗ ' + st.w + '</span>' +
+        '<span>Total: ✓ ' + tot.c + ' | ✗ ' + tot.w + '</span>' +
       '</div>' +
       '<div class="d-line"></div>' +
       '<div class="dict-sentence" id="dictSentence"></div>' +
-      '<input id="dictTyper" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">' +
       '<div class="fb" id="dictFb"></div>' +
-      '<div class="d-hint">اضغط على الجملة وابدأ تكتب. علامات الترقيم بتتكمل لوحدها، والحرف الغلط مش هيتكتب.</div>' +
+      '<div class="d-hint">Tap the sentence and start typing. Punctuation is added for you. Wrong letters are not typed.</div>' +
     '</div>';
   }
 
   function wireDictation() {
     const rb = document.getElementById("dictRestart");
     if (rb) {
-      rb.onclick = () => { dictIdx = 0; renderAll(); };
+      rb.onclick = () => { dictIdx = 0; saveDict(); renderAll(); };
       return;
     }
     const typer = document.getElementById("dictTyper");
-    if (!typer) return;
+    typer.style.display = "block";
+    typer.style.position = "absolute";
+    typer.style.opacity = "0";
+    typer.style.width = "1px";
+    typer.style.height = "1px";
+    typer.style.pointerEvents = "none";
 
-    // نبدأ الجملة من أول الكتابة لما الجملة تتغير بس
     const key = dictIdx;
     if (dKey !== key) {
       dKey = key;
@@ -675,7 +796,7 @@
     document.getElementById("dictSentence").onclick = () => typer.focus();
     typer.focus();
 
-    typer.addEventListener("input", e => {
+    typer.oninput = e => {
       const raw = typer.value;
       typer.value = "";
       if (dLocked) return;
@@ -698,7 +819,9 @@
         }
       }
       saveDict();
+
       if (wrong) {
+        speakWordAt(dPos);
         dFlash = dPos;
         clearTimeout(dFlashTimer);
         dFlashTimer = setTimeout(() => { dFlash = -1; renderDictSentence(); }, 350);
@@ -709,19 +832,19 @@
         dLocked = true;
         const fb = document.getElementById("dictFb");
         fb.className = "fb ok";
-        fb.textContent = "✓ صح";
+        fb.textContent = "✓ Correct";
         setTimeout(() => { dictIdx++; saveDict(); renderAll(); }, 700);
       }
-    });
+    };
 
-    typer.addEventListener("keydown", e => {
+    typer.onkeydown = e => {
       if (e.key === "Backspace") {
         e.preventDefault();
         backspaceD();
         dFlash = -1;
         renderDictSentence();
       }
-    });
+    };
 
     document.getElementById("dictPrev").onclick = () => {
       if (dictIdx > 0) { dictIdx--; saveDict(); renderAll(); }
@@ -745,192 +868,85 @@
     };
   }
 
-  // Shift يعيد تشغيل جملة الإملاء
+  // Shift replays the dictation sentence
   document.addEventListener("keydown", e => {
-    if (e.key === "Shift" && !e.repeat && tabName === "dictation" && dictIdx < ALL_DICT.length) {
+    if (e.key === "Shift" && !e.repeat && tabName === "dictation" && studentName && dictIdx < ALL_DICT.length) {
       speak(dTarget());
     }
   });
 
-  // ===== الحالة الأصلية =====
-  let unitIndex = 0;
-  let tabName = "vocab";
-  const TABS = [
-    { id: "vocab", label: "الكلمات" },
-    { id: "grammar", label: "القواعد" },
-    { id: "exercises", label: "التمارين" },
-    { id: "speaking", label: "الكلام" },
-    { id: "dictation", label: "الإملاء" }
-  ];
-
-  // ===== الصوت =====
-  // اختيار أطبع صوت إنجليزي متاح على الجهاز
-  let cachedVoice = null;
-  function getVoice() {
-    if (cachedVoice) return cachedVoice;
-    const all = speechSynthesis.getVoices();
-    const en = all.filter(v => /^en/i.test(v.lang));
-    const prefs = [/natural/i, /google us english/i, /aria|jenny|guy|ava|emma|michelle|andrew/i, /samantha|zira|david/i];
-    for (const p of prefs) {
-      const found = en.find(v => p.test(v.name));
-      if (found) { cachedVoice = found; return found; }
-    }
-    cachedVoice = en[0] || null;
-    return cachedVoice;
-  }
-  if ("speechSynthesis" in window) {
-    speechSynthesis.onvoiceschanged = () => { cachedVoice = null; };
-  }
-
-  function speak(text) {
-    if (!("speechSynthesis" in window)) return;
-    speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(cleanForSpeech(text));
-    const voice = getVoice();
-    if (voice) u.voice = voice;
-    u.lang = voice ? voice.lang : "en-US";
-    u.rate = 0.85;
-    u.pitch = 1;
-    speechSynthesis.speak(u);
-  }
-
-  // ===== الرسم =====
-  function renderNav() {
-    const unitNav = document.getElementById("unitNav");
-    unitNav.innerHTML = UNITS.map((u, i) =>
-      `<button class="${i === unitIndex ? "active" : ""}" data-u="${i}">${u.title.split(":")[0]}</button>`
-    ).join("");
-    unitNav.querySelectorAll("button").forEach(b => b.onclick = () => {
-      unitIndex = Number(b.dataset.u);
+  // ===== Name screen =====
+  function renderNameScreen() {
+    document.getElementById("main").innerHTML =
+      '<div class="card">' +
+        '<h3>Enter your name to start</h3>' +
+        '<p class="tip">Your progress is saved under this name, so you can continue later.</p>' +
+        '<input id="nameIn" class="name-input" placeholder="Full name">' +
+        '<button class="check-btn" id="nameGo">Start</button>' +
+      '</div>';
+    document.getElementById("nameGo").onclick = async () => {
+      const v = document.getElementById("nameIn").value.trim();
+      if (!v) return;
+      studentName = v;
+      localStorage.setItem("sye_name", v);
+      await loadDict();
+      await loadMessages();
+      tabName = "dictation";
       renderAll();
-    });
-
-    const tabNav = document.getElementById("tabNav");
-    tabNav.innerHTML = TABS.map(t =>
-      `<button class="${t.id === tabName ? "active" : ""}" data-t="${t.id}">${t.label}</button>`
-    ).join("");
-    tabNav.querySelectorAll("button").forEach(b => b.onclick = () => {
-      tabName = b.dataset.t;
-      renderAll();
-    });
-  }
-
-  function renderVocab(u) {
-    const groups = [...new Set(u.vocab.map(v => v.group))];
-    return groups.map(g => `
-      <div class="card">
-        <h3>${g}</h3>
-        <div class="vocab-grid">
-          ${u.vocab.filter(v => v.group === g).map(v => `
-            <div class="vocab-item">
-              <button class="speak" data-say="${v.en}">🔊</button>
-              <span>${v.en}</span>
-              <small>${v.ar}</small>
-            </div>`).join("")}
-        </div>
-      </div>`).join("");
-  }
-
-  function renderExercises(u) {
-    return `
-      <div class="card" id="exCard">
-        ${u.exercises.map((ex, i) => {
-          if (ex.type === "choose") {
-            return `<div class="ex" data-i="${i}">
-              <div class="q">${i + 1}. ${ex.q}</div>
-              <div class="choices">${ex.options.map(o => `<button data-v="${o}">${o}</button>`).join("")}</div>
-              <div class="fb"></div>
-            </div>`;
-          }
-          return `<div class="ex" data-i="${i}">
-            <div class="q">${i + 1}. ${ex.q}</div>
-            <input class="fill-input" type="text" autocomplete="off" spellcheck="false">
-            <div class="fb"></div>
-          </div>`;
-        }).join("")}
-        <button class="check-btn" id="checkBtn">تحقق من الإجابات</button>
-        <div class="score" id="scoreBox"></div>
-      </div>`;
-  }
-
-  function wireExercises(u) {
-    const picked = {};
-    document.querySelectorAll("#exCard .ex").forEach(box => {
-      const i = Number(box.dataset.i);
-      const ex = u.exercises[i];
-      if (ex.type === "choose") {
-        box.querySelectorAll(".choices button").forEach(b => b.onclick = () => {
-          box.querySelectorAll(".choices button").forEach(x => x.classList.remove("picked"));
-          b.classList.add("picked");
-          picked[i] = b.dataset.v;
-        });
-      }
-    });
-
-    document.getElementById("checkBtn").onclick = () => {
-      let correct = 0;
-      document.querySelectorAll("#exCard .ex").forEach(box => {
-        const i = Number(box.dataset.i);
-        const ex = u.exercises[i];
-        const fb = box.querySelector(".fb");
-        let val;
-        if (ex.type === "choose") {
-          val = picked[i];
-        } else {
-          val = box.querySelector("input").value.trim().toLowerCase();
-        }
-        if (!val) {
-          fb.className = "fb";
-          fb.textContent = "";
-          return;
-        }
-        const answers = ex.type === "choose" ? [ex.answer] : ex.answer;
-        const ok = answers.map(a => a.toLowerCase()).includes(val.toLowerCase());
-        if (ok) correct++;
-        fb.className = "fb " + (ok ? "ok" : "bad");
-        fb.textContent = ok ? "✓ صح" : "✗ الإجابة الصحيحة: " + (ex.type === "choose" ? ex.answer : ex.answer[0]);
-      });
-      document.getElementById("scoreBox").textContent =
-        "النتيجة: " + correct + " من " + u.exercises.length;
     };
   }
 
-  function renderSpeaking(u) {
-    return u.speaking.map(s => `
+  function escapeText(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  }
+
+  function renderMessagesCard() {
+    if (!myMessages.length) return "";
+    return myMessages.map(m => `
       <div class="card speak-card">
-        <h3>${s.title}</h3>
-        ${s.lines.map(l => `<p>${l}</p>`).join("")}
-        <p class="tip">${s.tip}</p>
+        <h3>Message from your teacher</h3>
+        <p>${escapeText(m.body)}</p>
+        <p class="tip">${new Date(m.created_at).toLocaleDateString("en-GB")}</p>
       </div>`).join("");
   }
 
+  // ===== Render =====
   function renderAll() {
     renderNav();
+    if (!studentName) { renderNameScreen(); return; }
+
     const u = UNITS[unitIndex];
     const main = document.getElementById("main");
     let body = "";
 
-    if (tabName === "vocab") body = renderVocab(u);
+    if (tabName === "words") body = renderWords(u);
     else if (tabName === "grammar") body = u.grammar;
     else if (tabName === "exercises") body = renderExercises(u);
     else if (tabName === "speaking") body = renderSpeaking(u);
     else if (tabName === "dictation") body = renderDictationShell();
 
-    main.innerHTML = `
-      <div class="unit-title">${u.title}</div>
-      <p class="unit-sub">${u.sub}</p>
-      ${body}`;
+    const header = tabName === "dictation"
+      ? '<div class="unit-title">Dictation: all units</div><p class="unit-sub">111 sentences from Unit 1, Unit 2 and Unit 3</p>'
+      : '<div class="unit-title">' + u.title + '</div><p class="unit-sub">' + u.sub + '</p>';
+
+    main.innerHTML = renderMessagesCard() + header + body;
 
     main.querySelectorAll(".speak").forEach(b => b.onclick = () => speak(b.dataset.say));
     if (tabName === "exercises") wireExercises(u);
     if (tabName === "dictation") wireDictation();
   }
 
-  if (studentName) {
-    loadDict().then(renderAll);
-  } else {
-    renderNameScreen();
+  // ===== Start =====
+  async function boot() {
+    await loadExtras();
+    if (studentName) {
+      await loadDict();
+      await loadMessages();
+      tabName = "dictation";
+    }
+    renderAll();
   }
+  boot();
 </script>
 </body>
 </html>
