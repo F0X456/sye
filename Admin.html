@@ -154,7 +154,8 @@ Talk about food | I like pizza ; I eat fish | Use I like..."></textarea>
       const txt = await res.text();
       throw new Error(txt || ("HTTP " + res.status));
     }
-    return res.status === 204 ? null : res.json();
+    const text = await res.text();
+    return text ? JSON.parse(text) : null;
   }
 
   async function login() {
