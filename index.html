@@ -957,14 +957,32 @@
     return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   }
 
+  // Hidden messages are remembered on this device
+  function getDismissed() {
+    try { return JSON.parse(localStorage.getItem("sye_dismissed") || "[]"); } catch (e) { return []; }
+  }
+  function dismissMessage(id) {
+    const d = getDismissed();
+    if (!d.includes(id)) d.push(id);
+    localStorage.setItem("sye_dismissed", JSON.stringify(d));
+  }
+
   function renderMessagesCard() {
-    if (!myMessages.length) return "";
-    return myMessages.map(m => `
-      <div class="card speak-card">
-        <h3>Message from your teacher</h3>
-        <p>${escapeText(m.body)}</p>
-        <p class="tip">${new Date(m.created_at).toLocaleDateString("en-GB")}</p>
-      </div>`).join("");
+    const dismissed = getDismissed();
+    const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    const visible = myMessages.filter(m =>
+      !dismissed.includes(m.id) && new Date(m.created_at).getTime() > weekAgo
+    );
+    if (!visible.length) return "";
+    return '<div class="card speak-card"><h3>📬 Messages from your teacher (' + visible.length + ')</h3>' +
+      visible.map(m => `
+        <div style="border-top:1px solid #2a2a33;padding-top:8px;margin-top:8px">
+          <p>${escapeText(m.body)}</p>
+          <p class="tip">${new Date(m.created_at).toLocaleDateString("en-GB")}
+            <button class="speak" data-dismiss="${m.id}" style="margin-left:8px">Hide</button>
+          </p>
+        </div>`).join("") +
+      '</div>';
   }
 
   // ===== Render =====
@@ -988,7 +1006,11 @@
 
     main.innerHTML = renderMessagesCard() + header + body;
 
-    main.querySelectorAll(".speak").forEach(b => b.onclick = () => speak(b.dataset.say));
+    main.querySelectorAll(".speak[data-say]").forEach(b => b.onclick = () => speak(b.dataset.say));
+    main.querySelectorAll("[data-dismiss]").forEach(b => b.onclick = () => {
+      dismissMessage(Number(b.dataset.dismiss));
+      renderAll();
+    });
     if (tabName === "exercises") wireExercises(u);
     if (tabName === "dictation") wireDictation();
   }
