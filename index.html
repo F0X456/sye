@@ -460,7 +460,7 @@
   ];
 
   let dictIdx = 0;
-  let dictVisible = true;
+  let dictVisible = false;
   let dPos = 0;
   let dFlash = -1;
   let dFlashTimer = null;
@@ -847,6 +847,10 @@
       dPos = skipPunctD(0);
       dFlash = -1;
       dLocked = false;
+      const st0 = statOf(dictIdx);
+      st0.tries = (st0.tries || 0) + 1;
+      st0.text = dTarget();
+      saveDict();
       speak(dTarget());
     }
     renderDictSentence();
@@ -870,7 +874,9 @@
         if (typeCharD(ch)) {
           statOf(dictIdx).c++;
         } else {
-          statOf(dictIdx).w++;
+          const sw = statOf(dictIdx);
+          sw.w++;
+          sw.wrongs = (sw.wrongs || []).concat([{ typed: ch, expected: dTarget()[dPos] || "" }]).slice(-30);
           wrong = true;
           break;
         }
@@ -890,6 +896,8 @@
         const fb = document.getElementById("dictFb");
         fb.className = "fb ok";
         fb.textContent = "✓ Correct";
+        statOf(dictIdx).done = true;
+        saveDict();
         setTimeout(() => { dictIdx++; saveDict(); renderAll(); }, 700);
       }
     };
@@ -907,6 +915,9 @@
       if (dictIdx > 0) { dictIdx--; saveDict(); renderAll(); }
     };
     document.getElementById("dictRedo").onclick = () => {
+      const sr = statOf(dictIdx);
+      sr.tries = (sr.tries || 0) + 1;
+      saveDict();
       dPos = skipPunctD(0);
       dFlash = -1;
       dLocked = false;
