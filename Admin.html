@@ -50,6 +50,7 @@
     <button id="tabMessages" class="ghost">الرسائل</button>
     <button id="tabWords" class="ghost">الكلمات</button>
     <button id="tabUnits" class="ghost">الوحدات</button>
+    <button id="tabAttempts" class="ghost">تفاصيل الطلاب</button>
     <button id="logoutBtn" class="ghost">خروج</button>
   </div>
 
@@ -77,6 +78,14 @@
     <div class="err" id="sentenceErr"></div>
     <h3 style="margin-top:18px">الجمل الحالية</h3>
     <div id="sentencesOut"></div>
+  </div>
+
+  <!-- تفاصيل الطلاب -->
+  <div class="card hidden" id="secAttempts">
+    <h3>تفاصيل كل طالب</h3>
+    <select id="attStudent"></select>
+    <div id="attSummary" class="sub" style="margin-bottom:12px"></div>
+    <div id="attOut"></div>
   </div>
 
   <!-- الوحدات -->
@@ -188,7 +197,7 @@ Talk about food | I like pizza ; I eat fish | Use I like..."></textarea>
   }
 
   // ===== التبويبات =====
-  const sections = { progress: "secProgress", sentences: "secSentences", messages: "secMessages", words: "secWords", units: "secUnits" };
+  const sections = { progress: "secProgress", sentences: "secSentences", messages: "secMessages", words: "secWords", units: "secUnits", attempts: "secAttempts" };
   function show(name) {
     for (const k in sections) {
       document.getElementById(sections[k]).classList.toggle("hidden", k !== name);
@@ -198,6 +207,7 @@ Talk about food | I like pizza ; I eat fish | Use I like..."></textarea>
     if (name === "messages") loadMessages();
     if (name === "words") loadWords();
     if (name === "units") loadUnits();
+    if (name === "attempts") loadAttempts();
   }
 
   // ===== تقدم الطلاب =====
@@ -311,6 +321,63 @@ Talk about food | I like pizza ; I eat fish | Use I like..."></textarea>
       err.textContent = "مش قادر أبعت: " + e.message;
     }
   };
+
+  // ===== تفاصيل الطلاب =====
+  let attemptRows = [];
+
+  async function loadAttempts() {
+    const sel = document.getElementById("attStudent");
+    try {
+      attemptRows = await api("progress?select=name,idx,stats&order=name.asc");
+      const prev = sel.value;
+      sel.innerHTML = attemptRows.map(r => `<option value="${escapeHtml(r.name)}">${escapeHtml(r.name)}</option>`).join("");
+      if (prev && attemptRows.some(r => r.name === prev)) sel.value = prev;
+      if (!attemptRows.length) {
+        document.getElementById("attOut").textContent = "مفيش طلاب لسه";
+        return;
+      }
+      renderAttempts();
+    } catch (e) {
+      document.getElementById("attOut").textContent = "حصل خطأ: " + e.message;
+    }
+  }
+
+  function renderAttempts() {
+    const name = document.getElementById("attStudent").value;
+    const row = attemptRows.find(r => r.name === name);
+    const out = document.getElementById("attOut");
+    const sum = document.getElementById("attSummary");
+    if (!row) { out.textContent = ""; sum.textContent = ""; return; }
+
+    const stats = row.stats || {};
+    const keys = Object.keys(stats).map(Number).sort((a, b) => a - b);
+    const done = keys.filter(k => stats[k].done).length;
+    const wrongTotal = keys.reduce((a, k) => a + (stats[k].w || 0), 0);
+    const startsTotal = keys.reduce((a, k) => a + (stats[k].tries || 0), 0);
+
+    sum.textContent = "الجمل المكتملة: " + done + " | إجمالي الغلط: " + wrongTotal + " | مرات البدء: " + startsTotal + " | وصل لجملة رقم: " + (row.idx + 1);
+
+    if (!keys.length) { out.textContent = "الطالب لسه ما بدأش يكتب"; return; }
+
+    out.innerHTML = `
+      <table>
+        <tr><th>#</th><th>الجملة</th><th>الحالة</th><th>مرات البدء</th><th>الغلط</th><th>الحروف اللي اتكتبت غلط</th></tr>
+        ${keys.map(k => {
+          const s = stats[k];
+          const wrongs = (s.wrongs || []).map(x => escapeHtml(x.typed) + " بدل " + escapeHtml(x.expected)).join("، ");
+          return `<tr>
+            <td>${k + 1}</td>
+            <td class="en">${escapeHtml(s.text || "-")}</td>
+            <td>${s.done ? '<span class="ok">✓ خلصها</span>' : '<span class="bad">لسه</span>'}</td>
+            <td>${s.tries || 0}</td>
+            <td class="bad">${s.w || 0}</td>
+            <td>${wrongs || "-"}</td>
+          </tr>`;
+        }).join("")}
+      </table>`;
+  }
+
+  document.getElementById("attStudent").onchange = renderAttempts;
 
   // ===== الوحدات =====
   async function loadUnits() {
@@ -457,6 +524,7 @@ Talk about food | I like pizza ; I eat fish | Use I like..."></textarea>
   document.getElementById("tabMessages").onclick = () => show("messages");
   document.getElementById("tabWords").onclick = () => show("words");
   document.getElementById("tabUnits").onclick = () => show("units");
+  document.getElementById("tabAttempts").onclick = () => show("attempts");
 </script>
 </body>
 </html>
