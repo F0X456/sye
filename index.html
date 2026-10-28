@@ -45,7 +45,7 @@
   .score { margin-top: 10px; font-weight: bold; }
   .speak-card { border-right: 5px solid var(--accent); }
   .speak-card p { font-size: 16px; }
-
+ 
   /* Dictation panel */
   .dict-dark { position: relative; background: #000; color: #f2f2f5; border-radius: 16px; padding: 22px 24px 26px; }
   .d-top { display: flex; justify-content: flex-end; color: #9a9aa6; font-size: 14px; margin-bottom: 8px; }
@@ -72,6 +72,7 @@
   .dict-dark .fb.bad { color: var(--bad); }
   .dict-dark .d-hint { color: #9a9aa6; font-size: 13px; margin-top: 18px; }
   .done { text-align: center; padding: 40px 0; }
+  .d-instr { color: #c9cde0; font-size: 14px; line-height: 1.7; margin-bottom: 14px; padding: 10px 12px; border: 1px solid #2a2a33; border-radius: 8px; background: #0f0f14; }
   .name-input { width: 100%; padding: 10px; background: #16161c; color: #e8e8ee; border: 1px solid #2a2a33; border-radius: 8px; font-size: 16px; margin-bottom: 10px; font-family: inherit; }
 </style>
 </head>
@@ -81,17 +82,17 @@
   <span>English Community</span>
   <button onclick="localStorage.removeItem('sye_name');location.reload()" style="padding:6px 12px;border-radius:8px;border:1px solid #fff;background:transparent;color:#fff;cursor:pointer;font-family:inherit;">Change name</button>
 </header>
-
+ 
 <nav class="units" id="unitNav"></nav>
 <nav class="tabs" id="tabNav"></nav>
 <main id="main"></main>
 <input id="dictTyper" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="display:none">
-
+ 
 <script>
   // ===== Supabase (same project as the teacher and admin pages) =====
   const SB_URL = "https://atkmzjxgosdmfbglgger.supabase.co";
   const SB_KEY = "sb_publishable_o-JAvblX-VTm2ojH_Em-0w_BcIzF0Om";
-
+ 
   // ===== Emoji for each word =====
   const EMOJI = {
     "Wake up early": "⏰", "Do homework": "📚", "Do sports": "⚽", "Brush your teeth": "🪥",
@@ -107,9 +108,13 @@
     "meet / met": "🤝", "lose / lost": "🔍", "feel / felt": "😊", "speak / spoke": "🗣️",
     "have / had": "🙋", "go / went": "🚶", "run / ran": "🏃", "eat / ate": "🥗",
     "forget / forgot": "🤔", "see / saw": "👀", "visit / visited": "🏡", "watch / watched": "🎬",
-    "play / played": "🎮", "study / studied": "📖"
+    "play / played": "🎮", "study / studied": "📖",
+    "a city": "🏙️", "the countryside": "🌿", "the sea": "🌊", "an island": "🏝️", "a mountain": "⛰️",
+    "a lake": "🛶", "a hill": "🌄", "a river": "🏞️", "a field": "🌾",
+    "north": "🧭", "south": "🧭", "east": "🧭", "west": "🧭",
+    "the sky": "🌤️", "clouds": "☁️", "trees": "🌳", "flowers": "🌸"
   };
-
+ 
   // ===== Units =====
   const UNITS = [
     {
@@ -321,9 +326,81 @@
         { title: "Talk about a bad day", lines: ["When: Yesterday / Last Friday", "Where: At work / At the cinema", "What: I lost my phone and I forgot a meeting."], tip: "Fill in the table: When? Where? What?" },
         { title: "Someone's childhood", lines: ["She lived in a big town.", "She travelled to school by bus.", "She didn't like tennis."], tip: "Use the past simple in every sentence." }
       ]
+    },
+    {
+      title: "Unit 4: Places and Holidays",
+      sub: "Places, directions, nature, there is / there are, past simple questions",
+      vocab: [
+        { en: "a city", group: "Places" },
+        { en: "the countryside", group: "Places" },
+        { en: "the sea", group: "Places" },
+        { en: "an island", group: "Places" },
+        { en: "a mountain", group: "Places" },
+        { en: "a lake", group: "Places" },
+        { en: "a hill", group: "Places" },
+        { en: "a river", group: "Places" },
+        { en: "a field", group: "Places" },
+        { en: "north", group: "Directions" },
+        { en: "south", group: "Directions" },
+        { en: "east", group: "Directions" },
+        { en: "west", group: "Directions" },
+        { en: "the sky", group: "Nature" },
+        { en: "clouds", group: "Nature" },
+        { en: "trees", group: "Nature" },
+        { en: "flowers", group: "Nature" }
+      ],
+      grammar: `
+        <div class="card">
+          <h3>There is / there are</h3>
+          <p>Use <b>there is</b> with one thing: There is a lake near my house.</p>
+          <p>Use <b>there are</b> with more than one thing: There are many trees in the field.</p>
+        </div>
+        <div class="card">
+          <h3>Past simple: positive</h3>
+          <p>Subject + past verb + complement</p>
+          <p>I played football yesterday. / She went to school yesterday.</p>
+          <p class="tip">Regular verbs add ed (played). Irregular verbs change (went). Learn the irregular verbs.</p>
+        </div>
+        <div class="card">
+          <h3>Past simple: negative</h3>
+          <p>Subject + didn't + base verb</p>
+          <p>I didn't play football yesterday. / She didn't go to school yesterday.</p>
+        </div>
+        <div class="card">
+          <h3>Past simple: questions</h3>
+          <table>
+            <tr><th>Type</th><th>Pattern</th><th>Example</th></tr>
+            <tr><td>Yes / No</td><td>Did + subject + base verb?</td><td>Did you play football yesterday? Yes, I did. / No, I didn't.</td></tr>
+            <tr><td>Wh-</td><td>Wh-word + did + subject + base verb?</td><td>What did you eat yesterday? Where did she go last week?</td></tr>
+          </table>
+          <p class="tip">Question words: what, where, when, why, who.</p>
+        </div>
+      `,
+      exercises: [
+        { type: "choose", q: "There ___ a lake near my house.", options: ["is", "are"], answer: "is" },
+        { type: "choose", q: "There ___ many trees in the countryside.", options: ["is", "are"], answer: "are" },
+        { type: "fill", q: "I ___ (go) to the sea last summer.", answer: ["went"] },
+        { type: "fill", q: "She ___ (not / visit) the mountain last year.", answer: ["didn't visit"] },
+        { type: "choose", q: "___ you visit an island before?", options: ["Did", "Do"], answer: "Did" },
+        { type: "fill", q: "Where ___ they ___ (go) on holiday?", answer: ["did go"] },
+        { type: "choose", q: "We swam in the ___ every day.", options: ["sea", "hill"], answer: "sea" },
+        { type: "fill", q: "What ___ you ___ (do) yesterday?", answer: ["did do"] },
+        { type: "choose", q: "North is the opposite of ___.", options: ["south", "east"], answer: "south" },
+        { type: "fill", q: "There ___ (be) flowers in the field.", answer: ["are"] }
+      ],
+      speaking: [
+        { title: "Describe your favourite place", lines: ["My favourite place is the sea.", "There are many boats and there is a nice breeze."], tip: "Use today's vocabulary." },
+        { title: "Describe what you see", lines: ["What can you see in the sky today?", "I can see clouds and birds."], tip: "Use: the sky, clouds." },
+        { title: "Nature near your home", lines: ["Do you have trees and flowers near your home?", "Do you like taking photos of flowers and trees?"], tip: "Answer with Yes or No and explain why." },
+        { title: "Places you like", lines: ["Do you like walking in a field?", "Would you like to live near a river? Why?", "Do you like the sea or the mountains? Why?"], tip: "Give a reason for every answer." },
+        { title: "Islands and holidays", lines: ["Do you like to live on an island? Why or why not?", "Did you visit an island before?", "When your holiday is finished, are you happy to get back to work or school? Why?"], tip: "Use the past simple for past questions." },
+        { title: "Your last holiday", lines: ["Where did you go on your last holiday?", "How long did you stay?", "What did you do there?"], tip: "Use the past simple: went, stayed, did." },
+        { title: "A childhood holiday", lines: ["Where did you go on holiday when you were a child?"], tip: "Use: when I was a child, I went to..." },
+        { title: "Talk about a happy holiday", lines: ["Place: where did you go?", "Time: when was it?", "Transportation: how did you travel?", "People: who were you with?", "Food: what did you eat?", "Activities: what did you do?"], tip: "Talk about each point, one by one." }
+      ]
     }
   ];
-
+ 
   // ===== Dictation sentences (all units together, in order) =====
   const DICTATION = [
     [
@@ -442,12 +519,24 @@
       "The students didn't understand the question, so they asked the teacher to explain it again.",
       "We cooked a big meal for the family, and everyone said it was the best food they had eaten all year.",
       "Did your parents visit you at university last semester? Yes, they came twice, and they brought us lots of food."
+    ],
+    [
+      "Last summer we went to the sea, and we swam every day in the cool water.",
+      "There is a beautiful lake near my grandmother's house in the countryside.",
+      "Did you visit an island before? No, I didn't, but I want to go next year.",
+      "There are many trees and flowers in the field behind our school.",
+      "We walked up the hill in the morning, and the view from the top was amazing.",
+      "The city is very noisy, but the countryside is quiet and peaceful.",
+      "They didn't go to the mountains last winter because the weather was bad.",
+      "Where did you go on holiday when you were a child?",
+      "Look at the clouds in the sky, because it is going to rain this afternoon.",
+      "My cousin lives in the north, and she often swims in the river near her house."
     ]
   ];
-
+ 
   let ALL_DICT = DICTATION.flat();
   let myMessages = [];
-
+ 
   // ===== State =====
   let unitIndex = 0;
   let tabName = "words";
@@ -458,7 +547,7 @@
     { id: "speaking", label: "Speaking" },
     { id: "dictation", label: "Dictation" }
   ];
-
+ 
   let dictIdx = 0;
   let dictVisible = false;
   let dPos = 0;
@@ -468,7 +557,7 @@
   let dKey = null;
   let dictStats = {};
   let studentName = localStorage.getItem("sye_name") || "";
-
+ 
   // ===== Voice =====
   let cachedVoice = null;
   function getVoice() {
@@ -485,11 +574,11 @@
   if ("speechSynthesis" in window) {
     speechSynthesis.onvoiceschanged = () => { cachedVoice = null; };
   }
-
+ 
   function cleanForSpeech(t) {
     return t.replace(/\(s\)/g, "s").replace(/\//g, " or ").replace(/[()]/g, "").replace(/\s+/g, " ").trim();
   }
-
+ 
   function speak(text) {
     if (!("speechSynthesis" in window)) return;
     speechSynthesis.cancel();
@@ -501,7 +590,7 @@
     u.pitch = 1;
     speechSynthesis.speak(u);
   }
-
+ 
   // ===== Supabase =====
   async function sbFetch(path, opts = {}) {
     try {
@@ -520,7 +609,7 @@
       return null;
     }
   }
-
+ 
   // Extra sentences and words added by the admin
   // Format: fill | question | answer1 ; answer2
   //         choose | question | option1 ; option2 | correct option
@@ -533,7 +622,7 @@
       return { type: "fill", q: p[1] || "", answer: (p[2] || "").split(";").map(s => s.trim()).filter(Boolean) };
     }).filter(e => e.q);
   }
-
+ 
   // Format: title | line one ; line two | tip
   function parseSpeaking(text) {
     return text.split("\n").map(l => l.trim()).filter(Boolean).map(line => {
@@ -541,13 +630,13 @@
       return { title: p[0] || "", lines: (p[1] || "").split(";").map(s => s.trim()).filter(Boolean), tip: p[2] || "" };
     });
   }
-
+ 
   // One line per paragraph
   function formatGrammar(text) {
     const lines = text.split("\n").map(l => l.trim()).filter(Boolean);
     return '<div class="card">' + lines.map(l => '<p>' + escapeText(l) + '</p>').join("") + '</div>';
   }
-
+ 
   async function loadExtras() {
     // Units created by the admin (they come after the built-in units, in order)
     const units = await sbFetch("units?select=*&order=unit_no.asc");
@@ -574,14 +663,14 @@
       });
     }
   }
-
+ 
   // Messages sent by the admin to this student or to everyone
   async function loadMessages() {
     if (!studentName) return;
     const rows = await sbFetch("messages?select=*&or=(to_name.eq." + encodeURIComponent(studentName) + ",to_name.eq.all)&order=created_at.desc&limit=20");
     myMessages = rows || [];
   }
-
+ 
   // Create a row for the student in the database if they are new
   async function ensureStudentRow() {
     const rows = await sbFetch("progress?name=eq." + encodeURIComponent(studentName) + "&select=name");
@@ -593,7 +682,7 @@
       });
     }
   }
-
+ 
   async function loadDict() {
     if (!studentName) return;
     await ensureStudentRow();
@@ -603,7 +692,7 @@
       dictStats = rows[0].stats || {};
     }
   }
-
+ 
   let saveTimer = null;
   function saveDict() {
     if (!studentName) return;
@@ -616,15 +705,16 @@
       });
     }, 300);
   }
-
+ 
   function statOf(i) {
     if (!dictStats[i]) dictStats[i] = { c: 0, w: 0 };
     return dictStats[i];
   }
   function totals() {
-    return Object.values(dictStats).reduce((a, s) => ({ c: a.c + s.c, w: a.w + s.w }), { c: 0, w: 0 });
+    return Object.keys(dictStats).filter(k => /^\d+$/.test(k)).map(k => dictStats[k])
+      .reduce((a, s) => ({ c: a.c + (s.c || 0), w: a.w + (s.w || 0) }), { c: 0, w: 0 });
   }
-
+ 
   // ===== Navigation =====
   function renderNav() {
     if (!studentName) {
@@ -647,7 +737,7 @@
       renderAll();
     });
   }
-
+ 
   // ===== Words =====
   function renderWords(u) {
     const groups = [...new Set(u.vocab.map(v => v.group))];
@@ -663,7 +753,7 @@
         </div>
       </div>`).join("");
   }
-
+ 
   // ===== Exercises =====
   function renderExercises(u) {
     return `
@@ -686,7 +776,7 @@
         <div class="score" id="scoreBox"></div>
       </div>`;
   }
-
+ 
   function wireExercises(u) {
     const picked = {};
     document.querySelectorAll("#exCard .ex").forEach(box => {
@@ -710,13 +800,24 @@
         const answers = ex.type === "choose" ? [ex.answer] : ex.answer;
         const ok = answers.map(a => a.toLowerCase()).includes(val.toLowerCase());
         if (ok) correct++;
+        if (studentName) {
+          dictStats["e" + (unitIndex + 1) + "-" + (i + 1)] = {
+            unit: unitIndex + 1,
+            q: ex.q,
+            typed: val,
+            answer: ex.type === "choose" ? ex.answer : ex.answer[0],
+            ok: ok,
+            at: new Date().toISOString()
+          };
+        }
         fb.className = "fb " + (ok ? "ok" : "bad");
         fb.textContent = ok ? "✓ Correct" : "✗ Answer: " + (ex.type === "choose" ? ex.answer : ex.answer[0]);
       });
       document.getElementById("scoreBox").textContent = "Score: " + correct + " out of " + u.exercises.length;
+      saveDict();
     };
   }
-
+ 
   // ===== Speaking =====
   function renderSpeaking(u) {
     return u.speaking.map(s => `
@@ -726,7 +827,7 @@
         <p class="tip">${s.tip}</p>
       </div>`).join("");
   }
-
+ 
   // ===== Dictation =====
   function dTarget() { return ALL_DICT[dictIdx]; }
   function isPunctD(ch) { return !/[A-Za-z ]/.test(ch); }
@@ -750,7 +851,7 @@
     while (p > 0 && isPunctD(t[p])) p--;
     dPos = Math.max(0, p);
   }
-
+ 
   // Speak only the word at the cursor
   function speakWordAt(p) {
     const t = dTarget();
@@ -761,7 +862,7 @@
     const word = t.slice(s, e).replace(/[^A-Za-z']/g, "");
     if (word) speak(word);
   }
-
+ 
   function renderDictSentence() {
     const t = dTarget();
     const el = document.getElementById("dictSentence");
@@ -794,7 +895,16 @@
     }
     el.innerHTML = html;
   }
-
+ 
+  function unitOfSentence(i) {
+    let acc = 0;
+    for (let u = 0; u < DICTATION.length; u++) {
+      acc += DICTATION[u].length;
+      if (i < acc) return u + 1;
+    }
+    return "extra";
+  }
+ 
   function renderDictationShell() {
     const total = ALL_DICT.length;
     if (dictIdx >= total) {
@@ -806,6 +916,7 @@
     const tot = totals();
     return '<div class="dict-dark">' +
       '<div class="d-top"><span>Sentence ' + (dictIdx + 1) + ' of ' + total + '</span></div>' +
+      '<div class="d-instr"><b>Exercise: Dictation</b> · Unit ' + unitOfSentence(dictIdx) + '<br>Listen to the sentence and type what you hear.</div>' +
       '<div class="d-bar"><div class="d-bar-fill" style="width:' + (dictIdx / total * 100) + '%"></div></div>' +
       '<div class="d-controls">' +
         '<button class="d-pill" id="dictToggle">' + (dictVisible ? "Hide text" : "Show text") + '</button>' +
@@ -826,7 +937,7 @@
       '<div class="d-hint">Tap the sentence and start typing. Punctuation is added for you. Wrong letters are not typed.</div>' +
     '</div>';
   }
-
+ 
   function wireDictation() {
     const rb = document.getElementById("dictRestart");
     if (rb) {
@@ -840,7 +951,7 @@
     typer.style.width = "1px";
     typer.style.height = "1px";
     typer.style.pointerEvents = "none";
-
+ 
     const key = dictIdx;
     if (dKey !== key) {
       dKey = key;
@@ -856,19 +967,19 @@
     renderDictSentence();
     document.getElementById("dictSentence").onclick = () => typer.focus();
     typer.focus();
-
+ 
     typer.oninput = e => {
       const raw = typer.value;
       typer.value = "";
       if (dLocked) return;
-
+ 
       if (e.inputType && e.inputType.startsWith("delete")) {
         backspaceD();
         dFlash = -1;
         renderDictSentence();
         return;
       }
-
+ 
       let wrong = false;
       for (const ch of raw) {
         if (typeCharD(ch)) {
@@ -882,7 +993,7 @@
         }
       }
       saveDict();
-
+ 
       if (wrong) {
         speakWordAt(dPos);
         dFlash = dPos;
@@ -890,7 +1001,7 @@
         dFlashTimer = setTimeout(() => { dFlash = -1; renderDictSentence(); }, 350);
       }
       renderDictSentence();
-
+ 
       if (dPos >= dTarget().length) {
         dLocked = true;
         const fb = document.getElementById("dictFb");
@@ -901,7 +1012,7 @@
         setTimeout(() => { dictIdx++; saveDict(); renderAll(); }, 700);
       }
     };
-
+ 
     typer.onkeydown = e => {
       if (e.key === "Backspace") {
         e.preventDefault();
@@ -910,7 +1021,7 @@
         renderDictSentence();
       }
     };
-
+ 
     document.getElementById("dictPrev").onclick = () => {
       if (dictIdx > 0) { dictIdx--; saveDict(); renderAll(); }
     };
@@ -935,14 +1046,14 @@
       renderAll();
     };
   }
-
+ 
   // Shift replays the dictation sentence
   document.addEventListener("keydown", e => {
     if (e.key === "Shift" && !e.repeat && tabName === "dictation" && studentName && dictIdx < ALL_DICT.length) {
       speak(dTarget());
     }
   });
-
+ 
   // ===== Name screen =====
   function renderNameScreen() {
     document.getElementById("main").innerHTML =
@@ -963,11 +1074,11 @@
       renderAll();
     };
   }
-
+ 
   function escapeText(s) {
     return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   }
-
+ 
   // Hidden messages are remembered on this device
   function getDismissed() {
     try { return JSON.parse(localStorage.getItem("sye_dismissed") || "[]"); } catch (e) { return []; }
@@ -977,7 +1088,7 @@
     if (!d.includes(id)) d.push(id);
     localStorage.setItem("sye_dismissed", JSON.stringify(d));
   }
-
+ 
   function renderMessagesCard() {
     const dismissed = getDismissed();
     const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
@@ -995,28 +1106,28 @@
         </div>`).join("") +
       '</div>';
   }
-
+ 
   // ===== Render =====
   function renderAll() {
     renderNav();
     if (!studentName) { renderNameScreen(); return; }
-
+ 
     const u = UNITS[unitIndex];
     const main = document.getElementById("main");
     let body = "";
-
+ 
     if (tabName === "words") body = renderWords(u);
     else if (tabName === "grammar") body = u.grammar;
     else if (tabName === "exercises") body = renderExercises(u);
     else if (tabName === "speaking") body = renderSpeaking(u);
     else if (tabName === "dictation") body = renderDictationShell();
-
+ 
     const header = tabName === "dictation"
       ? '<div class="unit-title">Dictation: all units</div><p class="unit-sub">111 sentences from Unit 1, Unit 2 and Unit 3</p>'
       : '<div class="unit-title">' + u.title + '</div><p class="unit-sub">' + u.sub + '</p>';
-
+ 
     main.innerHTML = renderMessagesCard() + header + body;
-
+ 
     main.querySelectorAll(".speak[data-say]").forEach(b => b.onclick = () => speak(b.dataset.say));
     main.querySelectorAll("[data-dismiss]").forEach(b => b.onclick = () => {
       dismissMessage(Number(b.dataset.dismiss));
@@ -1025,7 +1136,7 @@
     if (tabName === "exercises") wireExercises(u);
     if (tabName === "dictation") wireDictation();
   }
-
+ 
   // ===== Start =====
   async function boot() {
     await loadExtras();
@@ -1035,7 +1146,7 @@
       tabName = "dictation";
     }
     renderAll();
-
+ 
     // كل دقيقة يشوف إذا فيه رسالة جديدة
     setInterval(async () => {
       if (!studentName) return;
@@ -1049,3 +1160,4 @@
 </script>
 </body>
 </html>
+ 
